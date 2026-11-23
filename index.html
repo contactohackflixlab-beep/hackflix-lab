@@ -242,7 +242,7 @@
           <h3 class="text-lg font-bold text-white">1. Plantilla de Productos y Precios</h3>
           <p class="text-xs text-zinc-300">Agrega tus productos principales. Nosotros cruzaremos esta tabla con tus insumos y gastos.</p>
         </div>
-        <button type="button" onclick="agregarFilaPlantilla()" class="px-3 py-1.5 rounded text-xs font-semibold bg-[#1b1e24] hover:bg-white/10 text-white border border-white/15">+ Añadir Fila</button>
+        <button id="btnAddRow" type="button" class="px-3 py-1.5 rounded text-xs font-semibold bg-[#1b1e24] hover:bg-white/10 text-white border border-white/15">+ Añadir Fila</button>
       </div>
 
       <div class="overflow-x-auto">
@@ -263,7 +263,7 @@
 
       <div class="mt-4 flex items-center justify-between">
         <span id="msgPlantilla" class="text-xs text-emerald-400"></span>
-        <button type="button" onclick="guardarPlantillaCliente()" class="px-5 py-2.5 rounded font-bold text-sm text-white crimson-btn">
+        <button id="btnSaveTemplate" type="button" class="px-5 py-2.5 rounded font-bold text-sm text-white crimson-btn">
           Enviar Plantilla al Laboratorio
         </button>
       </div>
@@ -280,7 +280,7 @@
         <p class="text-xs text-zinc-300">Sube Excel, CSV, PDF de proveedores, recetas o listas de gastos fijos.</p>
         <input id="inputArchivoCliente" type="file" class="block w-full text-xs text-zinc-200 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-800 file:text-white hover:file:bg-red-700" />
         <input id="notaArchivoCliente" type="text" placeholder="Nota opcional (ej. Facturas de insumos marzo)" class="w-full px-3 py-2 rounded bg-[#1b1e24] border border-white/15 text-white text-xs" />
-        <button type="button" onclick="subirArchivo('entrada_cliente')" class="w-full py-2.5 rounded font-bold text-sm text-white crimson-btn">
+        <button id="btnUploadClient" type="button" class="w-full py-2.5 rounded font-bold text-sm text-white crimson-btn">
           Subir Archivo al Portal
         </button>
         <div class="pt-2">
@@ -323,7 +323,7 @@
         <select id="adminSelectCliente" class="w-full px-3 py-2 rounded bg-[#1b1e24] border border-white/15 text-white text-xs"></select>
         <input id="adminInputArchivo" type="file" class="block w-full text-xs text-zinc-200 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-emerald-800 file:text-white" />
         <input id="adminNotaEntrega" type="text" placeholder="Ej. Matriz de Costos y Márgenes Final v1.xlsx" class="w-full px-3 py-2 rounded bg-[#1b1e24] border border-white/15 text-white text-xs" />
-        <button type="button" onclick="subirEntregaAdmin()" class="w-full py-2.5 rounded font-bold text-sm bg-emerald-700 hover:bg-emerald-600 text-white">
+        <button id="btnPublishAdmin" type="button" class="w-full py-2.5 rounded font-bold text-sm bg-emerald-700 hover:bg-emerald-600 text-white">
           Publicar Reporte en Portal del Cliente
         </button>
       </div>
@@ -414,8 +414,10 @@
 
       async function handleLogin() {
         var msg = document.getElementById('authMsg');
-        var email = ((document.getElementById('authEmail') || {}).value || '').trim();
-        var pass = ((document.getElementById('authPass') || {}).value || '').trim();
+        var emailEl = document.getElementById('authEmail');
+        var passEl = document.getElementById('authPass');
+        var email = emailEl ? emailEl.value.trim() : '';
+        var pass = passEl ? passEl.value.trim() : '';
 
         if (!email || !pass) {
           if (msg) msg.textContent = 'Escribe tu correo y contraseña.';
@@ -441,9 +443,12 @@
 
       async function handleRegister() {
         var msg = document.getElementById('authMsg');
-        var empresa = ((document.getElementById('authEmpresa') || {}).value || '').trim();
-        var email = ((document.getElementById('authEmail') || {}).value || '').trim();
-        var pass = ((document.getElementById('authPass') || {}).value || '').trim();
+        var empEl = document.getElementById('authEmpresa');
+        var emailEl = document.getElementById('authEmail');
+        var passEl = document.getElementById('authPass');
+        var empresa = empEl ? empEl.value.trim() : '';
+        var email = emailEl ? emailEl.value.trim() : '';
+        var pass = passEl ? passEl.value.trim() : '';
 
         if (!email || !pass) {
           if (msg) msg.textContent = 'Escribe tu correo y contraseña.';
@@ -456,4 +461,242 @@
           return;
         }
 
-        if (
+        if (msg) msg.textContent = 'Creando cuenta...';
+        var res = await client.auth.signUp({ email: email, password: pass });
+        if (res.error) {
+          if (msg) msg.textContent = res.error.message;
+          return;
+        }
+
+        if (res.data && res.data.user) {
+          await client.from('perfiles').insert({
+            id: res.data.user.id,
+            email: email,
+            empresa: empresa || email,
+            rol: 'cliente'
+          });
+        }
+
+        if (msg) msg.textContent = 'Cuenta creada. Entrando al portal...';
+        abrirPortal();
+      }
+
+      async function cerrarSesion() {
+        var client = getClient();
+        if (client && client.auth) await client.auth.signOut();
+        usuarioActual = null;
+        var btnLogout = document.getElementById('btnLogout');
+        if (btnLogout) btnLogout.classList.add('hidden');
+        mostrarSeccion('vitrina');
+      }
+
+      function agregarFilaPlantilla() {
+        var tbody = document.getElementById('tablaPlantillaBody');
+        if (!tbody) return;
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td class="py-1.5 pr-2"><input class="w-24 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="SKU-01"></td>' +
+          '<td class="py-1.5 pr-2"><input class="w-44 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="Producto"></td>' +
+          '<td class="py-1.5 pr-2"><input class="w-20 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="Unidad/Kg"></td>' +
+          '<td class="py-1.5 pr-2"><input type="number" class="w-24 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="0.00"></td>' +
+          '<td class="py-1.5 pr-2"><input type="number" class="w-24 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="0.00"></td>' +
+          '<td class="py-1.5"><input class="w-44 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="Insumos o merma"></td>';
+        tbody.appendChild(tr);
+      }
+
+      async function guardarPlantillaCliente() {
+        var client = getClient();
+        if (!client || !usuarioActual) return;
+        var filas = [];
+        document.querySelectorAll('#tablaPlantillaBody tr').forEach(function (tr) {
+          var inputs = tr.querySelectorAll('input');
+          if (inputs[1] && inputs[1].value.trim()) {
+            filas.push({
+              sku: inputs[0].value,
+              producto: inputs[1].value,
+              unidad: inputs[2].value,
+              precio_venta: inputs[3].value,
+              costo_estimado: inputs[4].value,
+              notas: inputs[5].value
+            });
+          }
+        });
+        if (!filas.length) return;
+
+        var res = await client.from('plantillas_datos').insert({
+          user_id: usuarioActual.id,
+          empresa: perfilActual ? perfilActual.empresa : usuarioActual.email,
+          tipo_plantilla: 'productos',
+          contenido: filas
+        });
+        var msgEl = document.getElementById('msgPlantilla');
+        if (msgEl) {
+          msgEl.textContent = res.error
+            ? 'Error: ' + res.error.message
+            : '¡Plantilla enviada al laboratorio! Ya podemos procesarla.';
+        }
+        if (!res.error) renderizarDatosYArchivos();
+      }
+
+      async function subirArchivo(categoria) {
+        var client = getClient();
+        if (!client || !usuarioActual) return;
+        var input = document.getElementById('inputArchivoCliente');
+        var notaEl = document.getElementById('notaArchivoCliente');
+        var nota = notaEl ? notaEl.value : '';
+        if (!input || !input.files || !input.files.length) return;
+
+        var file = input.files[0];
+        var ruta = usuarioActual.id + '/' + Date.now() + '_' + file.name;
+
+        var upRes = await client.storage.from('hackflix-files').upload(ruta, file);
+        if (upRes.error) { alert('Error subiendo archivo: ' + upRes.error.message); return; }
+
+        await client.from('archivos_portal').insert({
+          user_id: usuarioActual.id,
+          empresa: perfilActual ? perfilActual.empresa : usuarioActual.email,
+          nombre_archivo: file.name,
+          ruta_storage: ruta,
+          categoria: categoria,
+          nota: nota
+        });
+
+        input.value = '';
+        if (notaEl) notaEl.value = '';
+        cargarArchivosCliente();
+        renderizarDatosYArchivos();
+      }
+
+      async function descargarArchivo(ruta, nombre) {
+        var client = getClient();
+        if (!client) return;
+        var res = await client.storage.from('hackflix-files').createSignedUrl(ruta, 60);
+        if (res.error) { alert(res.error.message); return; }
+        var a = document.createElement('a');
+        a.href = res.data.signedUrl;
+        a.download = nombre;
+        a.click();
+      }
+
+      async function cargarArchivosCliente() {
+        var client = getClient();
+        if (!client || !usuarioActual) return;
+        var res = await client.from('archivos_portal').select('*').eq('user_id', usuarioActual.id).order('creado_en', { ascending: false });
+        var ulEnv = document.getElementById('listaEnviadosCliente');
+        var ulEnt = document.getElementById('listaEntregablesCliente');
+        if (!ulEnv || !ulEnt) return;
+        ulEnv.innerHTML = '';
+        ulEnt.innerHTML = '';
+
+        (res.data || []).forEach(function (item) {
+          if (item.categoria === 'entrada_cliente') {
+            ulEnv.innerHTML += '<li class="flex justify-between items-center bg-[#1b1e24]/90 px-3 py-2 rounded">' +
+              '<span>[Archivo] ' + item.nombre_archivo + ' <em class="text-zinc-400">(' + (item.nota || 'Sin nota') + ')</em></span>' +
+              '<span class="text-emerald-400">Recibido</span></li>';
+          } else {
+            ulEnt.innerHTML += '<li class="flex justify-between items-center bg-emerald-950/40 border border-emerald-700/40 px-3 py-2.5 rounded">' +
+              '<div><div class="font-bold text-white text-xs">[Reporte] ' + item.nombre_archivo + '</div>' +
+              '<div class="text-[11px] text-zinc-300">' + (item.nota || 'Estudio de costeo finalizado') + '</div></div>' +
+              '<button type="button" data-dl-ruta="' + item.ruta_storage + '" data-dl-nombre="' + item.nombre_archivo + '" class="btn-descargar px-3 py-1.5 rounded bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold">Descargar</button></li>';
+          }
+        });
+
+        ulEnt.querySelectorAll('.btn-descargar').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            descargarArchivo(btn.getAttribute('data-dl-ruta'), btn.getAttribute('data-dl-nombre'));
+          });
+        });
+      }
+
+      async function cargarDatosAdmin() {
+        var client = getClient();
+        if (!client) return;
+        var perfilesRes = await client.from('perfiles').select('*').eq('rol', 'cliente');
+        var sel = document.getElementById('adminSelectCliente');
+        if (sel) {
+          sel.innerHTML = (perfilesRes.data || []).map(function (p) {
+            return '<option value="' + p.id + '|' + p.empresa + '">' + p.empresa + ' (' + p.email + ')</option>';
+          }).join('');
+        }
+
+        var plantillasRes = await client.from('plantillas_datos').select('*').order('creado_en', { ascending: false });
+        var adminPlantillas = document.getElementById('adminListaPlantillas');
+        if (adminPlantillas) {
+          adminPlantillas.innerHTML = (plantillasRes.data || []).map(function (pl) {
+            return '<div class="bg-[#1b1e24] p-3 rounded border border-white/10">' +
+              '<div class="font-bold text-white">' + pl.empresa + ' — ' + (pl.contenido ? pl.contenido.length : 0) + ' productos enviados</div>' +
+              '<pre class="text-[11px] text-zinc-300 mt-1 overflow-x-auto">' + JSON.stringify(pl.contenido, null, 2) + '</pre></div>';
+          }).join('');
+        }
+
+        var archivosRes = await client.from('archivos_portal').select('*').eq('categoria', 'entrada_cliente').order('creado_en', { ascending: false });
+        var adminArchivos = document.getElementById('adminListaArchivos');
+        if (adminArchivos) {
+          adminArchivos.innerHTML = (archivosRes.data || []).map(function (a) {
+            return '<li class="flex justify-between items-center bg-[#1b1e24] px-3 py-2 rounded">' +
+              '<span><strong>' + a.empresa + ':</strong> ' + a.nombre_archivo + '</span>' +
+              '<button type="button" data-dl-ruta="' + a.ruta_storage + '" data-dl-nombre="' + a.nombre_archivo + '" class="btn-admin-dl text-red-400 underline">Descargar</button></li>';
+          }).join('');
+
+          adminArchivos.querySelectorAll('.btn-admin-dl').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+              descargarArchivo(btn.getAttribute('data-dl-ruta'), btn.getAttribute('data-dl-nombre'));
+            });
+          });
+        }
+      }
+
+      async function subirEntregaAdmin() {
+        var client = getClient();
+        if (!client) return;
+        var selEl = document.getElementById('adminSelectCliente');
+        var input = document.getElementById('adminInputArchivo');
+        var notaEl = document.getElementById('adminNotaEntrega');
+        var selVal = selEl ? selEl.value : '';
+        var nota = notaEl ? notaEl.value : '';
+        if (!selVal || !input || !input.files || !input.files.length) return;
+
+        var parts = selVal.split('|');
+        var clienteId = parts[0];
+        var empresa = parts[1];
+        var file = input.files[0];
+        var ruta = clienteId + '/entrega_' + Date.now() + '_' + file.name;
+
+        var upRes = await client.storage.from('hackflix-files').upload(ruta, file);
+        if (upRes.error) { alert(upRes.error.message); return; }
+
+        await client.from('archivos_portal').insert({
+          user_id: clienteId,
+          empresa: empresa,
+          nombre_archivo: file.name,
+          ruta_storage: ruta,
+          categoria: 'entrega_final',
+          nota: nota
+        });
+
+        alert('¡Reporte publicado en el portal del cliente!');
+        input.value = '';
+      }
+
+      async function abrirArchivoFirmado(rutaArchivo) {
+        var client = getClient();
+        if (!client) return;
+        var res = await client.storage.from('hackflix-files').createSignedUrl(rutaArchivo, 60);
+        if (!res.error && res.data && res.data.signedUrl) {
+          window.open(res.data.signedUrl, '_blank');
+        }
+      }
+
+      async function renderizarDatosYArchivos() {
+        var client = getClient();
+        if (!client) return;
+        var userRes = await client.auth.getUser();
+        var user = userRes && userRes.data ? userRes.data.user : null;
+        if (!user) return;
+
+        var contPlantillas = document.getElementById('vista-plantillas');
+        var contArchivos = document.getElementById('vista-archivos');
+
+        var plantillasRes = await client
+          .from('plantillas_datos')
+          .select('id, empresa, tipo_plant
