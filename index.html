@@ -219,8 +219,8 @@
           <input id="authPass" type="password" placeholder="Mínimo 6 caracteres" class="w-full px-3 py-2.5 rounded bg-[#1b1e24] border border-white/15 text-white text-sm" />
         </div>
         <div class="flex gap-3 pt-2">
-          <button type="button" onclick="iniciarSesion()" class="flex-1 py-2.5 rounded font-bold text-white crimson-btn text-sm">Iniciar Sesión</button>
-          <button type="button" onclick="registrarUsuario()" class="flex-1 py-2.5 rounded font-semibold text-zinc-100 border border-white/15 hover:bg-white/5 text-sm">Crear Cuenta</button>
+          <button id="btnLoginSubmit" type="button" class="flex-1 py-2.5 rounded font-bold text-white crimson-btn text-sm">Iniciar Sesión</button>
+          <button id="btnRegisterSubmit" type="button" class="flex-1 py-2.5 rounded font-semibold text-zinc-100 border border-white/15 hover:bg-white/5 text-sm">Crear Cuenta</button>
         </div>
         <p id="authMsg" class="text-xs text-red-400 text-center pt-1"></p>
       </div>
@@ -344,20 +344,23 @@
 
   <script>
     (function () {
-      var SUPABASE_URL = 'https://urcjqoxtynhzgqbqkmvq.supabase.co';
-      var SUPABASE_ANON_KEY = 'sb_publishable_Xm8CFzOqP6iZc3kmFUGOGA_r4ANm699';
-
+      var URL_SB = 'https://urcjqoxtynhzgqbqkmvq.supabase.co';
+      var KEY_SB = 'sb_publishable_Xm8CFzOqP6iZc3kmFUGOGA_r4ANm699';
       var sb = null;
-      try {
-        if (window.supabase && typeof window.supabase.createClient === 'function') {
-          sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        }
-      } catch (e) {
-        console.error('Error inicializando Supabase:', e);
-      }
-
       var usuarioActual = null;
       var perfilActual = null;
+
+      function getClient() {
+        if (sb) return sb;
+        try {
+          if (window.supabase && typeof window.supabase.createClient === 'function') {
+            sb = window.supabase.createClient(URL_SB, KEY_SB);
+          }
+        } catch (e) {
+          console.error('Error inicializando Supabase:', e);
+        }
+        return sb;
+      }
 
       function mostrarSeccion(nombre) {
         ['vitrina', 'auth', 'cliente', 'admin'].forEach(function (s) {
@@ -371,13 +374,14 @@
 
       async function abrirPortal() {
         mostrarSeccion('auth');
+        var client = getClient();
         var msg = document.getElementById('authMsg');
-        if (!sb || !sb.auth) {
+        if (!client || !client.auth) {
           if (msg) msg.textContent = 'Supabase no está disponible en este momento.';
           return;
         }
         try {
-          var res = await sb.auth.getSession();
+          var res = await client.auth.getSession();
           var session = res && res.data ? res.data.session : null;
           if (!session) return;
 
@@ -385,7 +389,7 @@
           var btnLogout = document.getElementById('btnLogout');
           if (btnLogout) btnLogout.classList.remove('hidden');
 
-          var perfilRes = await sb.from('perfiles').select('*').eq('id', usuarioActual.id).single();
+          var perfilRes = await client.from('perfiles').select('*').eq('id', usuarioActual.id).single();
           perfilActual = (perfilRes && perfilRes.data) ? perfilRes.data : { empresa: usuarioActual.email, rol: 'cliente' };
 
           if (perfilActual.rol === 'admin') {
@@ -408,248 +412,48 @@
         }
       }
 
-      async function registrarUsuario() {
+      async function handleLogin() {
         var msg = document.getElementById('authMsg');
-        if (!sb || !sb.auth) {
-          if (msg) msg.textContent = 'No se pudo conectar con Supabase.';
-          return;
-        }
-        var email = document.getElementById('authEmail').value.trim();
-        var password = document.getElementById('authPass').value.trim();
-        var empresa = document.getElementById('authEmpresa').value.trim() || email;
+        var email = ((document.getElementById('authEmail') || {}).value || '').trim();
+        var pass = ((document.getElementById('authPass') || {}).value || '').trim();
 
-        if (!email || !password) {
-          if (msg) msg.textContent = 'Ingresa tu correo y contraseña.';
+        if (!email || !pass) {
+          if (msg) msg.textContent = 'Escribe tu correo y contraseña.';
           return;
         }
 
-        if (msg) msg.textContent = 'Creando cuenta...';
-        var res = await sb.auth.signUp({ email: email, password: password });
+        var client = getClient();
+        if (!client || !client.auth) {
+          if (msg) msg.textContent = 'Error: no cargó Supabase en esta página.';
+          return;
+        }
+
+        if (msg) msg.textContent = 'Iniciando sesión...';
+        var res = await client.auth.signInWithPassword({ email: email, password: pass });
         if (res.error) {
-          if (msg) msg.textContent = res.error.message;
-          return;
-        }
-        if (res.data && res.data.user) {
-          await sb.from('perfiles').insert({ id: res.data.user.id, email: email, empresa: empresa, rol: 'cliente' });
-          if (msg) msg.textContent = 'Cuenta creada. Entrando al portal...';
-          abrirPortal();
-        }
-      }
-
-      async function iniciarSesion() {
-        var msg = document.getElementById('authMsg');
-        if (!sb || !sb.auth) {
-          if (msg) msg.textContent = 'No se pudo conectar con Supabase.';
-          return;
-        }
-        var email = document.getElementById('authEmail').value.trim();
-        var password = document.getElementById('authPass').value.trim();
-
-        if (!email || !password) {
-          if (msg) msg.textContent = 'Ingresa tu correo y contraseña.';
+          if (msg) msg.textContent = 'No se pudo iniciar sesión: ' + res.error.message;
           return;
         }
 
-        if (msg) msg.textContent = 'Verificando credenciales...';
-        var res = await sb.auth.signInWithPassword({ email: email, password: password });
-        if (res.error) {
-          if (msg) msg.textContent = 'Credenciales incorrectas: ' + res.error.message;
-          return;
-        }
         if (msg) msg.textContent = '';
         abrirPortal();
       }
 
-      async function cerrarSesion() {
-        if (sb && sb.auth) await sb.auth.signOut();
-        usuarioActual = null;
-        var btnLogout = document.getElementById('btnLogout');
-        if (btnLogout) btnLogout.classList.add('hidden');
-        mostrarSeccion('vitrina');
-      }
+      async function handleRegister() {
+        var msg = document.getElementById('authMsg');
+        var empresa = ((document.getElementById('authEmpresa') || {}).value || '').trim();
+        var email = ((document.getElementById('authEmail') || {}).value || '').trim();
+        var pass = ((document.getElementById('authPass') || {}).value || '').trim();
 
-      function agregarFilaPlantilla() {
-        var tr = document.createElement('tr');
-        tr.innerHTML =
-          '<td class="py-1.5 pr-2"><input class="w-24 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="SKU-01"></td>' +
-          '<td class="py-1.5 pr-2"><input class="w-44 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="Producto"></td>' +
-          '<td class="py-1.5 pr-2"><input class="w-20 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="Unidad/Kg"></td>' +
-          '<td class="py-1.5 pr-2"><input type="number" class="w-24 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="0.00"></td>' +
-          '<td class="py-1.5 pr-2"><input type="number" class="w-24 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="0.00"></td>' +
-          '<td class="py-1.5"><input class="w-44 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="Insumos o merma"></td>';
-        document.getElementById('tablaPlantillaBody').appendChild(tr);
-      }
-
-      async function guardarPlantillaCliente() {
-        if (!sb || !usuarioActual) return;
-        var filas = [];
-        document.querySelectorAll('#tablaPlantillaBody tr').forEach(function (tr) {
-          var inputs = tr.querySelectorAll('input');
-          if (inputs[1].value.trim()) {
-            filas.push({
-              sku: inputs[0].value,
-              producto: inputs[1].value,
-              unidad: inputs[2].value,
-              precio_venta: inputs[3].value,
-              costo_estimado: inputs[4].value,
-              notas: inputs[5].value
-            });
-          }
-        });
-        if (!filas.length) return;
-
-        var res = await sb.from('plantillas_datos').insert({
-          user_id: usuarioActual.id,
-          empresa: perfilActual.empresa,
-          tipo_plantilla: 'productos',
-          contenido: filas
-        });
-        document.getElementById('msgPlantilla').textContent = res.error
-          ? 'Error: ' + res.error.message
-          : '¡Plantilla enviada al laboratorio! Ya podemos procesarla.';
-        if (!res.error) renderizarDatosYArchivos();
-      }
-
-      async function subirArchivo(categoria) {
-        if (!sb || !usuarioActual) return;
-        var input = document.getElementById('inputArchivoCliente');
-        var nota = document.getElementById('notaArchivoCliente').value;
-        if (!input.files.length) return;
-
-        var file = input.files[0];
-        var ruta = usuarioActual.id + '/' + Date.now() + '_' + file.name;
-
-        var upRes = await sb.storage.from('hackflix-files').upload(ruta, file);
-        if (upRes.error) { alert('Error subiendo archivo: ' + upRes.error.message); return; }
-
-        await sb.from('archivos_portal').insert({
-          user_id: usuarioActual.id,
-          empresa: perfilActual.empresa,
-          nombre_archivo: file.name,
-          ruta_storage: ruta,
-          categoria: categoria,
-          nota: nota
-        });
-
-        input.value = '';
-        document.getElementById('notaArchivoCliente').value = '';
-        cargarArchivosCliente();
-        renderizarDatosYArchivos();
-      }
-
-      async function descargarArchivo(ruta, nombre) {
-        if (!sb) return;
-        var res = await sb.storage.from('hackflix-files').createSignedUrl(ruta, 60);
-        if (res.error) { alert(res.error.message); return; }
-        var a = document.createElement('a');
-        a.href = res.data.signedUrl;
-        a.download = nombre;
-        a.click();
-      }
-
-      async function cargarArchivosCliente() {
-        if (!sb || !usuarioActual) return;
-        var res = await sb.from('archivos_portal').select('*').eq('user_id', usuarioActual.id).order('creado_en', { ascending: false });
-        var ulEnv = document.getElementById('listaEnviadosCliente');
-        var ulEnt = document.getElementById('listaEntregablesCliente');
-        ulEnv.innerHTML = '';
-        ulEnt.innerHTML = '';
-
-        (res.data || []).forEach(function (item) {
-          if (item.categoria === 'entrada_cliente') {
-            ulEnv.innerHTML += '<li class="flex justify-between items-center bg-[#1b1e24]/90 px-3 py-2 rounded">' +
-              '<span>[Archivo] ' + item.nombre_archivo + ' <em class="text-zinc-400">(' + (item.nota || 'Sin nota') + ')</em></span>' +
-              '<span class="text-emerald-400">Recibido</span></li>';
-          } else {
-            ulEnt.innerHTML += '<li class="flex justify-between items-center bg-emerald-950/40 border border-emerald-700/40 px-3 py-2.5 rounded">' +
-              '<div><div class="font-bold text-white text-xs">[Reporte] ' + item.nombre_archivo + '</div>' +
-              '<div class="text-[11px] text-zinc-300">' + (item.nota || 'Estudio de costeo finalizado') + '</div></div>' +
-              '<button type="button" onclick="descargarArchivo(\'' + item.ruta_storage + '\', \'' + item.nombre_archivo + '\')" class="px-3 py-1.5 rounded bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold">Descargar</button></li>';
-          }
-        });
-      }
-
-      async function cargarDatosAdmin() {
-        if (!sb) return;
-        var perfilesRes = await sb.from('perfiles').select('*').eq('rol', 'cliente');
-        var sel = document.getElementById('adminSelectCliente');
-        sel.innerHTML = (perfilesRes.data || []).map(function (p) {
-          return '<option value="' + p.id + '|' + p.empresa + '">' + p.empresa + ' (' + p.email + ')</option>';
-        }).join('');
-
-        var plantillasRes = await sb.from('plantillas_datos').select('*').order('creado_en', { ascending: false });
-        document.getElementById('adminListaPlantillas').innerHTML = (plantillasRes.data || []).map(function (pl) {
-          return '<div class="bg-[#1b1e24] p-3 rounded border border-white/10">' +
-            '<div class="font-bold text-white">' + pl.empresa + ' — ' + (pl.contenido ? pl.contenido.length : 0) + ' productos enviados</div>' +
-            '<pre class="text-[11px] text-zinc-300 mt-1 overflow-x-auto">' + JSON.stringify(pl.contenido, null, 2) + '</pre></div>';
-        }).join('');
-
-        var archivosRes = await sb.from('archivos_portal').select('*').eq('categoria', 'entrada_cliente').order('creado_en', { ascending: false });
-        document.getElementById('adminListaArchivos').innerHTML = (archivosRes.data || []).map(function (a) {
-          return '<li class="flex justify-between items-center bg-[#1b1e24] px-3 py-2 rounded">' +
-            '<span><strong>' + a.empresa + ':</strong> ' + a.nombre_archivo + '</span>' +
-            '<button type="button" onclick="descargarArchivo(\'' + a.ruta_storage + '\', \'' + a.nombre_archivo + '\')" class="text-red-400 underline">Descargar</button></li>';
-        }).join('');
-      }
-
-      async function subirEntregaAdmin() {
-        if (!sb) return;
-        var selVal = document.getElementById('adminSelectCliente').value;
-        var input = document.getElementById('adminInputArchivo');
-        var nota = document.getElementById('adminNotaEntrega').value;
-        if (!selVal || !input.files.length) return;
-
-        var parts = selVal.split('|');
-        var clienteId = parts[0];
-        var empresa = parts[1];
-        var file = input.files[0];
-        var ruta = clienteId + '/entrega_' + Date.now() + '_' + file.name;
-
-        var upRes = await sb.storage.from('hackflix-files').upload(ruta, file);
-        if (upRes.error) { alert(upRes.error.message); return; }
-
-        await sb.from('archivos_portal').insert({
-          user_id: clienteId,
-          empresa: empresa,
-          nombre_archivo: file.name,
-          ruta_storage: ruta,
-          categoria: 'entrega_final',
-          nota: nota
-        });
-
-        alert('¡Reporte publicado en el portal del cliente!');
-        input.value = '';
-      }
-
-      async function abrirArchivoFirmado(rutaArchivo) {
-        if (!sb) return;
-        var res = await sb.storage.from('hackflix-files').createSignedUrl(rutaArchivo, 60);
-        if (!res.error && res.data && res.data.signedUrl) {
-          window.open(res.data.signedUrl, '_blank');
+        if (!email || !pass) {
+          if (msg) msg.textContent = 'Escribe tu correo y contraseña.';
+          return;
         }
-      }
 
-      async function renderizarDatosYArchivos() {
-        if (!sb) return;
-        var userRes = await sb.auth.getUser();
-        var user = userRes && userRes.data ? userRes.data.user : null;
-        if (!user) return;
+        var client = getClient();
+        if (!client || !client.auth) {
+          if (msg) msg.textContent = 'Error: no cargó Supabase en esta página.';
+          return;
+        }
 
-        var contPlantillas = document.getElementById('vista-plantillas');
-        var contArchivos = document.getElementById('vista-archivos');
-
-        var plantillasRes = await sb
-          .from('plantillas_datos')
-          .select('id, empresa, tipo_plantilla, estado, creado_en, contenido')
-          .eq('user_id', user.id)
-          .order('creado_en', { ascending: false });
-
-        if (!plantillasRes.error && contPlantillas) {
-          contPlantillas.innerHTML = (plantillasRes.data || []).map(function (p) {
-            var filas = Array.isArray(p.contenido) ? p.contenido : [];
-            var itemsHtml = filas.map(function (item) {
-              var precio = Number(item.precio_venta || 0);
-              var costo = Number(item.costo_estimado || 0);
-              var margen = (precio - costo).toFixed(2);
-              return '<div class="text-sm border-t border-white/10 pt-2 mt-2 flex flex-wrap gap-3">' +
-                '<span><strong>SKU:</strong> ' + (item.sku || '-')
+        if (
