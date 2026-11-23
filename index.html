@@ -7,160 +7,92 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body {
-      background-color: #3c414a;
-      background-image:
-        radial-gradient(circle at 25% 15%, rgba(255, 255, 255, 0.09), transparent 45%),
-        radial-gradient(circle at 80% 35%, rgba(255, 255, 255, 0.06), transparent 50%),
-        repeating-linear-gradient(
-          90deg,
-          rgba(255, 255, 255, 0.015) 0px,
-          rgba(255, 255, 255, 0.015) 1px,
-          rgba(0, 0, 0, 0.025) 1px,
-          rgba(0, 0, 0, 0.025) 3px
-        ),
-        linear-gradient(155deg, #4a505b 0%, #3a3f48 48%, #2c3038 100%);
-      color: #f3f4f6;
-      font-family: system-ui, -apple-system, sans-serif;
-    }
-    .metal-card {
-      background: linear-gradient(145deg, rgba(38, 42, 49, 0.94), rgba(25, 28, 33, 0.96));
-      border: 1px solid rgba(255, 255, 255, 0.11);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
-    }
-    .crimson-btn {
-      background: linear-gradient(135deg, #c81e1e, #881313);
-      transition: all 0.2s;
-    }
-    .crimson-btn:hover {
-      background: linear-gradient(135deg, #e02424, #9f1239);
-    }
+    body { background-color: #141619; color: #f3f4f6; font-family: system-ui, -apple-system, sans-serif; }
+    .metal-card { background: linear-gradient(145deg, #1e2126, #17191d); border: 1px solid #2d3139; }
+    .crimson-btn { background: linear-gradient(135deg, #b91c1c, #7f1d1d); transition: all 0.2s; }
+    .crimson-btn:hover { background: linear-gradient(135deg, #dc2626, #991b1b); }
   </style>
 </head>
-<body class="min-h-screen flex flex-col overflow-x-hidden">
+<body class="min-h-screen flex flex-col">
 
-  <header class="border-b border-white/10 bg-[#23272e]/90 sticky top-0 z-50 backdrop-blur">
+  <header class="border-b border-zinc-800 bg-zinc-950/90 sticky top-0 z-50 backdrop-blur">
     <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-3 cursor-pointer" onclick="mostrarSeccion('vitrina')">
-        <div class="w-10 h-10 rounded bg-gradient-to-br from-red-600 to-red-950 flex items-center justify-center font-black text-white tracking-tighter border border-red-400/40 shadow">HF</div>
+        <div class="w-10 h-10 rounded bg-gradient-to-br from-red-700 to-red-950 flex items-center justify-center font-black text-white tracking-tighter border border-red-500/40">HF</div>
         <div>
-          <span class="font-black text-xl tracking-wider text-white">HACK<span class="text-red-500">FLIX</span></span>
-          <span class="block text-[10px] tracking-[0.35em] text-zinc-300 -mt-1">LAB</span>
+          <span class="font-black text-xl tracking-wider text-white">HACK<span class="text-red-600">FLIX</span></span>
+          <span class="block text-[10px] tracking-[0.35em] text-zinc-400 -mt-1">LAB</span>
         </div>
       </div>
 
       <nav class="flex flex-wrap items-center gap-2 sm:gap-3 text-sm">
-        <button type="button" onclick="mostrarSeccion('vitrina')" class="px-3 py-1.5 rounded text-zinc-200 hover:text-white">Inicio</button>
-        <a href="#quienes-somos" onclick="mostrarSeccion('vitrina')" class="px-3 py-1.5 rounded text-zinc-200 hover:text-white">Nosotros</a>
-        <a href="#agendar-cotizacion" onclick="mostrarSeccion('vitrina')" class="px-3 py-1.5 rounded text-zinc-200 hover:text-white">Cotizar</a>
-        <button id="btnPortalNav" type="button" onclick="abrirPortal()" class="px-4 py-2 rounded font-semibold crimson-btn text-white shadow-lg shadow-black/30">
+        <button onclick="mostrarSeccion('vitrina')" class="px-3 py-1.5 rounded text-zinc-300 hover:text-white">Inicio</button>
+        <a href="#agendar-cotizacion" onclick="mostrarSeccion('vitrina')" class="px-3 py-1.5 rounded text-zinc-300 hover:text-white">Cotizar</a>
+        <button id="btnPortalNav" onclick="abrirPortal()" class="px-4 py-2 rounded font-semibold crimson-btn text-white shadow-lg shadow-red-950/40">
           Acceso Clientes
         </button>
-        <button id="btnLogout" type="button" onclick="cerrarSesion()" class="hidden px-3 py-1.5 rounded border border-zinc-600 text-zinc-200 hover:text-white">
+        <button id="btnLogout" onclick="cerrarSesion()" class="hidden px-3 py-1.5 rounded border border-zinc-700 text-zinc-300 hover:text-white">
           Salir
         </button>
       </nav>
     </div>
   </header>
 
-  <main id="sec-vitrina" class="flex-1 min-w-0">
+  <main id="sec-vitrina" class="flex-1">
     <section class="max-w-6xl mx-auto px-4 py-16 md:py-24 text-center">
-      <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-red-950/80 text-red-300 border border-red-700/50 mb-6">
+      <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-red-950/60 text-red-400 border border-red-800/50 mb-6">
         Claridad Financiera para Pequeñas, Medianas y Grandes Empresas
       </span>
-      <h1 class="text-4xl md:text-6xl font-black text-white tracking-tight leading-tight max-w-4xl mx-auto drop-shadow">
-        Sube los datos de tu negocio. <span class="text-red-500">Nosotros calculamos tus costos y márgenes reales.</span>
+      <h1 class="text-4xl md:text-6xl font-black text-white tracking-tight leading-tight max-w-4xl mx-auto">
+        Sube los datos de tu negocio. <span class="text-red-600">Nosotros calculamos tus costos y márgenes reales.</span>
       </h1>
-      <p class="mt-6 text-lg text-zinc-100/90 max-w-2xl mx-auto">
+      <p class="mt-6 text-lg text-zinc-400 max-w-2xl mx-auto">
         Sin software complicado ni curvas de aprendizaje. Llena nuestras plantillas guiadas o sube tus archivos actuales; nuestro laboratorio organiza tu información y te entrega la radiografía exacta de rentabilidad por producto.
       </p>
       <div class="mt-10 flex flex-wrap justify-center gap-4">
-        <button type="button" onclick="abrirPortal()" class="px-8 py-4 rounded-lg font-bold text-white crimson-btn shadow-xl shadow-black/30 text-base">
+        <button onclick="abrirPortal()" class="px-8 py-4 rounded-lg font-bold text-white crimson-btn shadow-xl shadow-red-950/50 text-base">
           Entrar al Portal y Subir Datos
         </button>
-        <a href="#agendar-cotizacion" class="px-8 py-4 rounded-lg font-semibold text-white bg-[#252930]/85 border border-white/15 hover:bg-[#2d323b]">
+        <a href="#agendar-cotizacion" class="px-8 py-4 rounded-lg font-semibold text-zinc-200 border border-zinc-700 hover:bg-zinc-800/60">
           Agendar Reunión / Cotizar
         </a>
       </div>
     </section>
 
     <section id="como-funciona" class="max-w-6xl mx-auto px-4 pb-16 grid md:grid-cols-3 gap-6">
-      <div class="metal-card p-6 rounded-xl min-w-0">
+      <div class="metal-card p-6 rounded-xl">
         <div class="text-red-500 font-black text-2xl mb-2">01. Carga Ordenada</div>
         <h3 class="text-white font-bold text-lg mb-2">Plantillas o Archivos Libres</h3>
-        <p class="text-zinc-300 text-sm">Completa nuestras plantillas web de productos e insumos o sube tus facturas, listas de precios y hojas de cálculo directamente a tu bóveda privada.</p>
+        <p class="text-zinc-400 text-sm">Completa nuestras plantillas web de productos e insumos o sube tus facturas, listas de precios y hojas de cálculo directamente a tu bóveda privada.</p>
       </div>
-      <div class="metal-card p-6 rounded-xl min-w-0">
+      <div class="metal-card p-6 rounded-xl">
         <div class="text-red-500 font-black text-2xl mb-2">02. Ingeniería de Costeo</div>
         <h3 class="text-white font-bold text-lg mb-2">Nosotros Hacemos el Cálculo</h3>
-        <p class="text-zinc-300 text-sm">Estructuramos tus costos directos, mermas, comisiones y gastos indirectos para determinar el costo unitario real y el margen de cada SKU.</p>
+        <p class="text-zinc-400 text-sm">Estructuramos tus costos directos, mermas, comisiones y gastos indirectos para determinar el costo unitario real y el margen de cada SKU.</p>
       </div>
-      <div class="metal-card p-6 rounded-xl min-w-0">
+      <div class="metal-card p-6 rounded-xl">
         <div class="text-red-500 font-black text-2xl mb-2">03. Descarga Ejecutiva</div>
         <h3 class="text-white font-bold text-lg mb-2">Decisiones con Certeza</h3>
-        <p class="text-zinc-300 text-sm">Recibe en tu mismo portal tu matriz limpia de costeo, semáforo de productos rentables vs. productos en pérdida y alertas de precios.</p>
-      </div>
-    </section>
-
-    <section id="quienes-somos" class="max-w-6xl mx-auto px-4 pb-16 space-y-6">
-      <div class="metal-card p-8 md:p-10 rounded-2xl min-w-0">
-        <span class="text-xs font-bold uppercase tracking-wider text-red-400">Quiénes Somos</span>
-        <h2 class="text-2xl md:text-3xl font-black text-white mt-1">
-          Hackflix Lab: Inteligencia de Negocios y Análisis Financiero
-        </h2>
-        <p class="text-sm text-zinc-200 leading-relaxed mt-4">
-          Somos un laboratorio de inteligencia de negocios y análisis financiero dedicado a transformar la información operativa de las empresas en decisiones claras y rentables. Ayudamos a negocios de <strong class="text-white">manufactura, retail, servicios y comercio electrónico</strong> —muchos de los cuales operan sin tener claridad real sobre cuánto les cuestan sus productos o servicios— a conocer primero sus costos reales, detectar costos ocultos y ordenar sus márgenes.
-        </p>
-        <p class="text-sm text-zinc-300 leading-relaxed mt-3">
-          Combinamos rigor contable, análisis profundo de costos y herramientas modernas de automatización para conectar el detalle de la operación diaria con los resultados financieros. A través de nuestro portal digital, centralizamos la información de cada cliente y entregamos matrices de costeo y reportes claros y accionables.
-        </p>
-      </div>
-
-      <div class="metal-card p-8 md:p-10 rounded-2xl border-l-4 border-l-red-500 min-w-0">
-        <div class="flex flex-col md:flex-row items-start gap-6 md:gap-8">
-          <img
-            src="./JENNIFER GOMEZ.jpeg"
-            alt="Jennifer Gomez — Fundadora y CEO de Hackflix Lab"
-            class="w-32 h-32 sm:w-36 sm:h-36 rounded-2xl object-cover object-top border-2 border-red-500/70 shrink-0 shadow-lg"
-          />
-
-          <div class="flex-1 min-w-0">
-            <span class="text-xs font-bold uppercase tracking-wider text-red-400">Liderazgo</span>
-            <h3 class="text-2xl font-black text-white mt-1">Jennifer Gomez</h3>
-            <p class="text-sm font-semibold text-red-400 mt-0.5">Fundadora y CEO — Contadora Pública</p>
-
-            <p class="text-sm text-zinc-200 leading-relaxed mt-4">
-              Contadora Pública con más de <strong class="text-white">15 años de experiencia</strong> liderando áreas de análisis de costos, presupuestos, contabilidad y dirección financiera en empresas de manufactura y servicios en México y Panamá. A lo largo de su trayectoria ha ayudado a muchas empresas a dar el primer paso más importante: conocer sus costos reales, rastrear el origen de las variaciones y traducir la información operativa en decisiones útiles.
-            </p>
-            <p class="text-sm text-zinc-300 leading-relaxed mt-3">
-              Ha preparado información y presentaciones financieras para Gerentes y Directores Financieros destinadas a CEO de Grupos, incluyendo equipos y direcciones en <strong class="text-white">Ciudad de México, Estados Unidos y Singapur</strong>. Asimismo, ha liderado iniciativas como la puesta en marcha de <strong class="text-white">SAP S/4HANA en 90 días</strong> y la reducción de anticipos a proveedores de <strong class="text-white">USD 40 millones a USD 5 millones</strong>, además de impulsar mejoras operativas en rentabilidad y rotación de inventarios. Fundó <strong class="text-white">Hackflix Lab</strong> en junio de 2024 para acercar este orden financiero y análisis de costos a más negocios.
-            </p>
-
-            <div class="mt-5 pt-4 border-t border-white/10 grid sm:grid-cols-2 gap-3 text-xs text-zinc-300">
-              <div class="min-w-0"><strong class="text-white">Especialidades:</strong> Costos, presupuestos, márgenes, planeación financiera, reportes ejecutivos, SAP S/4HANA y SAP Business One.</div>
-              <div class="min-w-0"><strong class="text-white">Formación:</strong> Licenciada en Contaduría Pública (Universidad Pablo Guardado Chávez, México).</div>
-            </div>
-          </div>
-        </div>
+        <p class="text-zinc-400 text-sm">Recibe en tu mismo portal tu matriz limpia de costeo, semáforo de productos rentables vs. productos en pérdida y alertas de precios.</p>
       </div>
     </section>
 
     <section id="agendar-cotizacion" class="max-w-6xl mx-auto px-4 pb-20">
-      <div class="metal-card p-8 md:p-10 rounded-2xl border border-red-500/30 min-w-0">
+      <div class="metal-card p-8 md:p-10 rounded-2xl border border-red-900/40">
         <div class="max-w-2xl">
-          <span class="text-xs font-bold uppercase tracking-wider text-red-400">Atención Directa</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-red-500">Atención Directa</span>
           <h2 class="text-2xl md:text-3xl font-black text-white mt-1">Agenda tu reunión y solicita tu cotización</h2>
-          <p class="text-sm text-zinc-300 mt-2">
+          <p class="text-sm text-zinc-400 mt-2">
             Escríbenos para revisar el tamaño de tu catálogo, el tipo de costeo que necesitas y coordinar una sesión.
           </p>
         </div>
 
         <div class="grid md:grid-cols-2 gap-6 mt-8">
-          <div class="bg-[#1b1e24]/90 border border-white/10 p-5 rounded-xl flex flex-col justify-between gap-4 min-w-0">
+          <div class="bg-zinc-950/70 border border-zinc-800 p-5 rounded-xl flex flex-col justify-between gap-4">
             <div>
               <div class="text-xs uppercase tracking-wider text-zinc-400">WhatsApp & Llamadas</div>
               <div class="text-xl font-bold text-white mt-1">+507 6321-2451</div>
-              <p class="text-xs text-zinc-300 mt-1">Ideal para coordinar rápido una reunión de diagnóstico o cotización.</p>
+              <p class="text-xs text-zinc-400 mt-1">Ideal para coordinar rápido una reunión de diagnóstico o cotización.</p>
             </div>
             <div class="flex flex-wrap gap-3">
               <a
@@ -173,23 +105,23 @@
               </a>
               <a
                 href="tel:+50763212451"
-                class="px-4 py-2.5 rounded-lg text-xs font-semibold text-zinc-100 border border-white/15 hover:bg-white/5"
+                class="px-4 py-2.5 rounded-lg text-xs font-semibold text-zinc-200 border border-zinc-700 hover:bg-zinc-800"
               >
                 Llamar ahora
               </a>
             </div>
           </div>
 
-          <div class="bg-[#1b1e24]/90 border border-white/10 p-5 rounded-xl flex flex-col justify-between gap-4 min-w-0">
+          <div class="bg-zinc-950/70 border border-zinc-800 p-5 rounded-xl flex flex-col justify-between gap-4">
             <div>
               <div class="text-xs uppercase tracking-wider text-zinc-400">Correo Electrónico</div>
               <div class="text-lg sm:text-xl font-bold text-white mt-1 break-all">contacto.hackflixlab@gmail.com</div>
-              <p class="text-xs text-zinc-300 mt-1">Envía los detalles de tu empresa, horarios disponibles o información inicial.</p>
+              <p class="text-xs text-zinc-400 mt-1">Envía los detalles de tu empresa, horarios disponibles o información inicial.</p>
             </div>
             <div>
               <a
                 href="mailto:contacto.hackflixlab@gmail.com?subject=Solicitud%20de%20cotizaci%C3%B3n%20y%20reuni%C3%B3n%20-%20HACKFLIX%20LAB&body=Hola%2C%20me%20gustar%C3%ADa%20agendar%20una%20reuni%C3%B3n%20para%20cotizar.%0A%0AEmpresa%3A%20%0ACantidad%20aproximada%20de%20productos%20o%20servicios%3A%20%0AHorarios%20disponibles%3A%20"
-                class="inline-block px-4 py-2.5 rounded-lg text-xs font-semibold text-zinc-100 border border-white/15 hover:bg-white/5"
+                class="inline-block px-4 py-2.5 rounded-lg text-xs font-semibold text-zinc-200 border border-zinc-700 hover:bg-zinc-800"
               >
                 Enviar Correo para Cotizar
               </a>
@@ -200,27 +132,27 @@
     </section>
   </main>
 
-  <section id="sec-auth" class="hidden flex-1 flex items-start justify-center px-4 pt-24 pb-12">
+  <section id="sec-auth" class="hidden flex-1 flex items-center justify-center px-4 py-12">
     <div class="metal-card w-full max-w-md p-8 rounded-2xl shadow-2xl">
       <h2 class="text-2xl font-bold text-white mb-1">Portal Privado de Clientes</h2>
-      <p class="text-sm text-zinc-300 mb-6">Ingresa o registra tu empresa para gestionar tus plantillas y reportes.</p>
+      <p class="text-sm text-zinc-400 mb-6">Ingresa o registra tu empresa para gestionar tus plantillas y reportes.</p>
 
       <div class="space-y-4">
         <div>
-          <label class="block text-xs uppercase tracking-wider text-zinc-300 mb-1">Nombre de la Empresa (solo registro)</label>
-          <input id="authEmpresa" type="text" placeholder="Ej. Distribuidora Central S.A." class="w-full px-3 py-2.5 rounded bg-[#1b1e24] border border-white/15 text-white text-sm" />
+          <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-1">Nombre de la Empresa (solo registro)</label>
+          <input id="authEmpresa" type="text" placeholder="Ej. Distribuidora Central S.A." class="w-full px-3 py-2.5 rounded bg-zinc-900 border border-zinc-700 text-white text-sm" />
         </div>
         <div>
-          <label class="block text-xs uppercase tracking-wider text-zinc-300 mb-1">Correo electrónico</label>
-          <input id="authEmail" type="email" placeholder="gerencia@tuempresa.com" class="w-full px-3 py-2.5 rounded bg-[#1b1e24] border border-white/15 text-white text-sm" />
+          <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-1">Correo electrónico</label>
+          <input id="authEmail" type="email" placeholder="gerencia@tuempresa.com" class="w-full px-3 py-2.5 rounded bg-zinc-900 border border-zinc-700 text-white text-sm" />
         </div>
         <div>
-          <label class="block text-xs uppercase tracking-wider text-zinc-300 mb-1">Contraseña</label>
-          <input id="authPass" type="password" placeholder="Mínimo 6 caracteres" class="w-full px-3 py-2.5 rounded bg-[#1b1e24] border border-white/15 text-white text-sm" />
+          <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-1">Contraseña</label>
+          <input id="authPass" type="password" placeholder="Mínimo 6 caracteres" class="w-full px-3 py-2.5 rounded bg-zinc-900 border border-zinc-700 text-white text-sm" />
         </div>
         <div class="flex gap-3 pt-2">
-          <button id="btnLoginSubmit" type="button" class="flex-1 py-2.5 rounded font-bold text-white crimson-btn text-sm">Iniciar Sesión</button>
-          <button id="btnRegisterSubmit" type="button" class="flex-1 py-2.5 rounded font-semibold text-zinc-100 border border-white/15 hover:bg-white/5 text-sm">Crear Cuenta</button>
+          <button onclick="iniciarSesion()" class="flex-1 py-2.5 rounded font-bold text-white crimson-btn text-sm">Iniciar Sesión</button>
+          <button onclick="registrarUsuario()" class="flex-1 py-2.5 rounded font-semibold text-zinc-200 border border-zinc-600 hover:bg-zinc-800 text-sm">Crear Cuenta</button>
         </div>
         <p id="authMsg" class="text-xs text-red-400 text-center pt-1"></p>
       </div>
@@ -228,27 +160,27 @@
   </section>
 
   <section id="sec-cliente" class="hidden flex-1 max-w-6xl w-full mx-auto px-4 py-10 space-y-8">
-    <div class="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
+    <div class="flex flex-wrap items-center justify-between gap-4 border-b border-zinc-800 pb-4">
       <div>
         <h2 class="text-2xl font-bold text-white" id="lblEmpresaCliente">Mi Empresa</h2>
-        <p class="text-sm text-zinc-300">Completa tus plantillas, sube respaldos y descarga tus estudios de costeo listos.</p>
+        <p class="text-sm text-zinc-400">Completa tus plantillas, sube respaldos y descarga tus estudios de costeo listos.</p>
       </div>
-      <span class="px-3 py-1 rounded-full text-xs bg-emerald-950/80 text-emerald-300 border border-emerald-700/40">Bóveda Cifrada Activa</span>
+      <span class="px-3 py-1 rounded-full text-xs bg-emerald-950/70 text-emerald-400 border border-emerald-700/40">Bóveda Cifrada Activa</span>
     </div>
 
     <div class="metal-card p-6 rounded-xl">
       <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
         <div>
           <h3 class="text-lg font-bold text-white">1. Plantilla de Productos y Precios</h3>
-          <p class="text-xs text-zinc-300">Agrega tus productos principales. Nosotros cruzaremos esta tabla con tus insumos y gastos.</p>
+          <p class="text-xs text-zinc-400">Agrega tus productos principales. Nosotros cruzaremos esta tabla con tus insumos y gastos.</p>
         </div>
-        <button id="btnAddRow" type="button" class="px-3 py-1.5 rounded text-xs font-semibold bg-[#1b1e24] hover:bg-white/10 text-white border border-white/15">+ Añadir Fila</button>
+        <button onclick="agregarFilaPlantilla()" class="px-3 py-1.5 rounded text-xs font-semibold bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-600">+ Añadir Fila</button>
       </div>
 
       <div class="overflow-x-auto">
         <table class="w-full text-left text-sm border-collapse">
           <thead>
-            <tr class="border-b border-white/15 text-zinc-300 text-xs uppercase">
+            <tr class="border-b border-zinc-700 text-zinc-400 text-xs uppercase">
               <th class="py-2 pr-2">SKU / Código</th>
               <th class="py-2 pr-2">Nombre del Producto</th>
               <th class="py-2 pr-2">Unidad</th>
@@ -257,19 +189,19 @@
               <th class="py-2">Notas / Insumos clave</th>
             </tr>
           </thead>
-          <tbody id="tablaPlantillaBody" class="divide-y divide-white/10"></tbody>
+          <tbody id="tablaPlantillaBody" class="divide-y divide-zinc-800"></tbody>
         </table>
       </div>
 
       <div class="mt-4 flex items-center justify-between">
         <span id="msgPlantilla" class="text-xs text-emerald-400"></span>
-        <button id="btnSaveTemplate" type="button" class="px-5 py-2.5 rounded font-bold text-sm text-white crimson-btn">
+        <button onclick="guardarPlantillaCliente()" class="px-5 py-2.5 rounded font-bold text-sm text-white crimson-btn">
           Enviar Plantilla al Laboratorio
         </button>
       </div>
 
       <div class="mt-6">
-        <h4 class="text-xs font-semibold uppercase text-zinc-300 mb-2">Tus plantillas enviadas</h4>
+        <h4 class="text-xs font-semibold uppercase text-zinc-400 mb-2">Tus plantillas enviadas</h4>
         <div id="vista-plantillas" class="space-y-3"></div>
       </div>
     </div>
@@ -277,34 +209,34 @@
     <div class="grid md:grid-cols-2 gap-6">
       <div class="metal-card p-6 rounded-xl space-y-4">
         <h3 class="text-lg font-bold text-white">2. Subir Archivos y Facturas</h3>
-        <p class="text-xs text-zinc-300">Sube Excel, CSV, PDF de proveedores, recetas o listas de gastos fijos.</p>
-        <input id="inputArchivoCliente" type="file" class="block w-full text-xs text-zinc-200 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-800 file:text-white hover:file:bg-red-700" />
-        <input id="notaArchivoCliente" type="text" placeholder="Nota opcional (ej. Facturas de insumos marzo)" class="w-full px-3 py-2 rounded bg-[#1b1e24] border border-white/15 text-white text-xs" />
-        <button id="btnUploadClient" type="button" class="w-full py-2.5 rounded font-bold text-sm text-white crimson-btn">
+        <p class="text-xs text-zinc-400">Sube Excel, CSV, PDF de proveedores, recetas o listas de gastos fijos.</p>
+        <input id="inputArchivoCliente" type="file" class="block w-full text-xs text-zinc-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-900 file:text-white hover:file:bg-red-800" />
+        <input id="notaArchivoCliente" type="text" placeholder="Nota opcional (ej. Facturas de insumos marzo)" class="w-full px-3 py-2 rounded bg-zinc-900 border border-zinc-700 text-white text-xs" />
+        <button onclick="subirArchivo('entrada_cliente')" class="w-full py-2.5 rounded font-bold text-sm text-white crimson-btn">
           Subir Archivo al Portal
         </button>
         <div class="pt-2">
-          <h4 class="text-xs font-semibold uppercase text-zinc-300 mb-2">Tus archivos enviados</h4>
-          <ul id="listaEnviadosCliente" class="space-y-2 text-xs text-zinc-200"></ul>
+          <h4 class="text-xs font-semibold uppercase text-zinc-400 mb-2">Tus archivos enviados</h4>
+          <ul id="listaEnviadosCliente" class="space-y-2 text-xs text-zinc-300"></ul>
           <div id="vista-archivos" class="mt-3 space-y-2"></div>
         </div>
       </div>
 
-      <div class="metal-card p-6 rounded-xl space-y-4 border-red-500/30">
+      <div class="metal-card p-6 rounded-xl space-y-4 border-red-900/40">
         <h3 class="text-lg font-bold text-white">3. Tus Reportes de Costos Listos</h3>
-        <p class="text-xs text-zinc-300">Aquí aparecerán tus matrices de costeo y márgenes calculados listos para descargar.</p>
+        <p class="text-xs text-zinc-400">Aquí aparecerán tus matrices de costeo y márgenes calculados listos para descargar.</p>
         <ul id="listaEntregablesCliente" class="space-y-3 text-sm">
-          <li class="text-xs text-zinc-400 italic">Aún no hay reportes finalizados. Te avisaremos en cuanto estén listos.</li>
+          <li class="text-xs text-zinc-500 italic">Aún no hay reportes finalizados. Te avisaremos en cuanto estén listos.</li>
         </ul>
       </div>
     </div>
   </section>
 
   <section id="sec-admin" class="hidden flex-1 max-w-6xl w-full mx-auto px-4 py-10 space-y-8">
-    <div class="border-b border-white/10 pb-4">
-      <span class="text-xs font-bold uppercase tracking-wider text-red-400">Modo Laboratorio Interno</span>
+    <div class="border-b border-zinc-800 pb-4">
+      <span class="text-xs font-bold uppercase tracking-wider text-red-500">Modo Laboratorio Interno</span>
       <h2 class="text-2xl font-bold text-white">Bandeja de Empresas y Entregables</h2>
-      <p class="text-sm text-zinc-300">Descarga la información enviada por tus clientes y súbeles su reporte final de costeo.</p>
+      <p class="text-sm text-zinc-400">Descarga la información enviada por tus clientes y súbeles su reporte final de costeo.</p>
     </div>
 
     <div class="metal-card p-6 rounded-xl">
@@ -320,383 +252,332 @@
 
       <div class="metal-card p-6 rounded-xl space-y-4">
         <h3 class="text-lg font-bold text-white">Subir Costeo Final a un Cliente</h3>
-        <select id="adminSelectCliente" class="w-full px-3 py-2 rounded bg-[#1b1e24] border border-white/15 text-white text-xs"></select>
-        <input id="adminInputArchivo" type="file" class="block w-full text-xs text-zinc-200 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-emerald-800 file:text-white" />
-        <input id="adminNotaEntrega" type="text" placeholder="Ej. Matriz de Costos y Márgenes Final v1.xlsx" class="w-full px-3 py-2 rounded bg-[#1b1e24] border border-white/15 text-white text-xs" />
-        <button id="btnPublishAdmin" type="button" class="w-full py-2.5 rounded font-bold text-sm bg-emerald-700 hover:bg-emerald-600 text-white">
+        <select id="adminSelectCliente" class="w-full px-3 py-2 rounded bg-zinc-900 border border-zinc-700 text-white text-xs"></select>
+        <input id="adminInputArchivo" type="file" class="block w-full text-xs text-zinc-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-emerald-800 file:text-white" />
+        <input id="adminNotaEntrega" type="text" placeholder="Ej. Matriz de Costos y Márgenes Final v1.xlsx" class="w-full px-3 py-2 rounded bg-zinc-900 border border-zinc-700 text-white text-xs" />
+        <button onclick="subirEntregaAdmin()" class="w-full py-2.5 rounded font-bold text-sm bg-emerald-700 hover:bg-emerald-600 text-white">
           Publicar Reporte en Portal del Cliente
         </button>
       </div>
     </div>
   </section>
 
-  <footer class="border-t border-white/10 bg-[#23272e]/90 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-300">
+  <footer class="border-t border-zinc-800 bg-zinc-950/90 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-400">
       <div>
-        <span class="font-bold text-white">HACKFLIX LAB</span> — Reuniones y cotizaciones:
+        <span class="font-bold text-zinc-200">HACKFLIX LAB</span> — Reuniones y cotizaciones:
         <a href="mailto:contacto.hackflixlab@gmail.com" class="text-red-400 hover:underline">contacto.hackflixlab@gmail.com</a>
       </div>
       <div class="flex items-center gap-4">
-        <a href="https://wa.me/50763212451" target="_blank" rel="noopener noreferrer" class="text-white hover:text-zinc-200 font-semibold">+507 6321-2451</a>
+        <a href="https://wa.me/50763212451" target="_blank" rel="noopener noreferrer" class="text-zinc-200 hover:text-white font-semibold">+507 6321-2451</a>
       </div>
     </div>
   </footer>
 
   <script>
-    (function () {
-      var URL_SB = 'https://urcjqoxtynhzgqbqkmvq.supabase.co';
-      var KEY_SB = 'sb_publishable_Xm8CFzOqP6iZc3kmFUGOGA_r4ANm699';
-      var sb = null;
-      var usuarioActual = null;
-      var perfilActual = null;
+    const SUPABASE_URL = 'https://urcjqoxtynhzgqbqkmvq.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_Xm8CFzOqP6iZc3kmFUGOGA_r4ANm699';
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-      function getClient() {
-        if (sb) return sb;
-        try {
-          if (window.supabase && typeof window.supabase.createClient === 'function') {
-            sb = window.supabase.createClient(URL_SB, KEY_SB);
-          }
-        } catch (e) {
-          console.error('Error inicializando Supabase:', e);
-        }
-        return sb;
-      }
+    let usuarioActual = null;
+    let perfilActual = null;
 
-      function mostrarSeccion(nombre) {
-        ['vitrina', 'auth', 'cliente', 'admin'].forEach(function (s) {
-          var el = document.getElementById('sec-' + s);
-          if (el) el.classList.add('hidden');
-        });
-        var target = document.getElementById('sec-' + nombre);
-        if (target) target.classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+    function mostrarSeccion(nombre) {
+      ['vitrina', 'auth', 'cliente', 'admin'].forEach(s => {
+        document.getElementById('sec-' + s).classList.add('hidden');
+      });
+      document.getElementById('sec-' + nombre).classList.remove('hidden');
+    }
 
-      async function abrirPortal() {
+    async function abrirPortal() {
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) {
         mostrarSeccion('auth');
-        var client = getClient();
-        var msg = document.getElementById('authMsg');
-        if (!client || !client.auth) {
-          if (msg) msg.textContent = 'Supabase no está disponible en este momento.';
-          return;
-        }
-        try {
-          var res = await client.auth.getSession();
-          var session = res && res.data ? res.data.session : null;
-          if (!session) return;
-
-          usuarioActual = session.user;
-          var btnLogout = document.getElementById('btnLogout');
-          if (btnLogout) btnLogout.classList.remove('hidden');
-
-          var perfilRes = await client.from('perfiles').select('*').eq('id', usuarioActual.id).single();
-          perfilActual = (perfilRes && perfilRes.data) ? perfilRes.data : { empresa: usuarioActual.email, rol: 'cliente' };
-
-          if (perfilActual.rol === 'admin') {
-            mostrarSeccion('admin');
-            cargarDatosAdmin();
-          } else {
-            var lbl = document.getElementById('lblEmpresaCliente');
-            if (lbl) lbl.textContent = perfilActual.empresa || usuarioActual.email;
-            mostrarSeccion('cliente');
-            var tbody = document.getElementById('tablaPlantillaBody');
-            if (tbody && tbody.children.length === 0) {
-              agregarFilaPlantilla();
-              agregarFilaPlantilla();
-            }
-            cargarArchivosCliente();
-            renderizarDatosYArchivos();
-          }
-        } catch (err) {
-          console.error('Error al verificar sesión:', err);
-        }
+        return;
       }
+      usuarioActual = session.user;
+      document.getElementById('btnLogout').classList.remove('hidden');
 
-      async function handleLogin() {
-        var msg = document.getElementById('authMsg');
-        var emailEl = document.getElementById('authEmail');
-        var passEl = document.getElementById('authPass');
-        var email = emailEl ? emailEl.value.trim() : '';
-        var pass = passEl ? passEl.value.trim() : '';
+      const { data: perfil } = await sb.from('perfiles').select('*').eq('id', usuarioActual.id).single();
+      perfilActual = perfil || { empresa: usuarioActual.email, rol: 'cliente' };
 
-        if (!email || !pass) {
-          if (msg) msg.textContent = 'Escribe tu correo y contraseña.';
-          return;
+      if (perfilActual.rol === 'admin') {
+        mostrarSeccion('admin');
+        cargarDatosAdmin();
+      } else {
+        document.getElementById('lblEmpresaCliente').textContent = perfilActual.empresa || usuarioActual.email;
+        mostrarSeccion('cliente');
+        if (document.getElementById('tablaPlantillaBody').children.length === 0) {
+          agregarFilaPlantilla();
+          agregarFilaPlantilla();
         }
-
-        var client = getClient();
-        if (!client || !client.auth) {
-          if (msg) msg.textContent = 'Error: no cargó Supabase en esta página.';
-          return;
-        }
-
-        if (msg) msg.textContent = 'Iniciando sesión...';
-        var res = await client.auth.signInWithPassword({ email: email, password: pass });
-        if (res.error) {
-          if (msg) msg.textContent = 'No se pudo iniciar sesión: ' + res.error.message;
-          return;
-        }
-
-        if (msg) msg.textContent = '';
-        abrirPortal();
-      }
-
-      async function handleRegister() {
-        var msg = document.getElementById('authMsg');
-        var empEl = document.getElementById('authEmpresa');
-        var emailEl = document.getElementById('authEmail');
-        var passEl = document.getElementById('authPass');
-        var empresa = empEl ? empEl.value.trim() : '';
-        var email = emailEl ? emailEl.value.trim() : '';
-        var pass = passEl ? passEl.value.trim() : '';
-
-        if (!email || !pass) {
-          if (msg) msg.textContent = 'Escribe tu correo y contraseña.';
-          return;
-        }
-
-        var client = getClient();
-        if (!client || !client.auth) {
-          if (msg) msg.textContent = 'Error: no cargó Supabase en esta página.';
-          return;
-        }
-
-        if (msg) msg.textContent = 'Creando cuenta...';
-        var res = await client.auth.signUp({ email: email, password: pass });
-        if (res.error) {
-          if (msg) msg.textContent = res.error.message;
-          return;
-        }
-
-        if (res.data && res.data.user) {
-          await client.from('perfiles').insert({
-            id: res.data.user.id,
-            email: email,
-            empresa: empresa || email,
-            rol: 'cliente'
-          });
-        }
-
-        if (msg) msg.textContent = 'Cuenta creada. Entrando al portal...';
-        abrirPortal();
-      }
-
-      async function cerrarSesion() {
-        var client = getClient();
-        if (client && client.auth) await client.auth.signOut();
-        usuarioActual = null;
-        var btnLogout = document.getElementById('btnLogout');
-        if (btnLogout) btnLogout.classList.add('hidden');
-        mostrarSeccion('vitrina');
-      }
-
-      function agregarFilaPlantilla() {
-        var tbody = document.getElementById('tablaPlantillaBody');
-        if (!tbody) return;
-        var tr = document.createElement('tr');
-        tr.innerHTML =
-          '<td class="py-1.5 pr-2"><input class="w-24 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="SKU-01"></td>' +
-          '<td class="py-1.5 pr-2"><input class="w-44 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="Producto"></td>' +
-          '<td class="py-1.5 pr-2"><input class="w-20 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="Unidad/Kg"></td>' +
-          '<td class="py-1.5 pr-2"><input type="number" class="w-24 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="0.00"></td>' +
-          '<td class="py-1.5 pr-2"><input type="number" class="w-24 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="0.00"></td>' +
-          '<td class="py-1.5"><input class="w-44 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="Insumos o merma"></td>';
-        tbody.appendChild(tr);
-      }
-
-      async function guardarPlantillaCliente() {
-        var client = getClient();
-        if (!client || !usuarioActual) return;
-        var filas = [];
-        document.querySelectorAll('#tablaPlantillaBody tr').forEach(function (tr) {
-          var inputs = tr.querySelectorAll('input');
-          if (inputs[1] && inputs[1].value.trim()) {
-            filas.push({
-              sku: inputs[0].value,
-              producto: inputs[1].value,
-              unidad: inputs[2].value,
-              precio_venta: inputs[3].value,
-              costo_estimado: inputs[4].value,
-              notas: inputs[5].value
-            });
-          }
-        });
-        if (!filas.length) return;
-
-        var res = await client.from('plantillas_datos').insert({
-          user_id: usuarioActual.id,
-          empresa: perfilActual ? perfilActual.empresa : usuarioActual.email,
-          tipo_plantilla: 'productos',
-          contenido: filas
-        });
-        var msgEl = document.getElementById('msgPlantilla');
-        if (msgEl) {
-          msgEl.textContent = res.error
-            ? 'Error: ' + res.error.message
-            : '¡Plantilla enviada al laboratorio! Ya podemos procesarla.';
-        }
-        if (!res.error) renderizarDatosYArchivos();
-      }
-
-      async function subirArchivo(categoria) {
-        var client = getClient();
-        if (!client || !usuarioActual) return;
-        var input = document.getElementById('inputArchivoCliente');
-        var notaEl = document.getElementById('notaArchivoCliente');
-        var nota = notaEl ? notaEl.value : '';
-        if (!input || !input.files || !input.files.length) return;
-
-        var file = input.files[0];
-        var ruta = usuarioActual.id + '/' + Date.now() + '_' + file.name;
-
-        var upRes = await client.storage.from('hackflix-files').upload(ruta, file);
-        if (upRes.error) { alert('Error subiendo archivo: ' + upRes.error.message); return; }
-
-        await client.from('archivos_portal').insert({
-          user_id: usuarioActual.id,
-          empresa: perfilActual ? perfilActual.empresa : usuarioActual.email,
-          nombre_archivo: file.name,
-          ruta_storage: ruta,
-          categoria: categoria,
-          nota: nota
-        });
-
-        input.value = '';
-        if (notaEl) notaEl.value = '';
         cargarArchivosCliente();
         renderizarDatosYArchivos();
       }
+    }
 
-      async function descargarArchivo(ruta, nombre) {
-        var client = getClient();
-        if (!client) return;
-        var res = await client.storage.from('hackflix-files').createSignedUrl(ruta, 60);
-        if (res.error) { alert(res.error.message); return; }
-        var a = document.createElement('a');
-        a.href = res.data.signedUrl;
-        a.download = nombre;
-        a.click();
+    async function registrarUsuario() {
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPass').value.trim();
+      const empresa = document.getElementById('authEmpresa').value.trim() || email;
+      const msg = document.getElementById('authMsg');
+
+      const { data, error } = await sb.auth.signUp({ email, password });
+      if (error) { msg.textContent = error.message; return; }
+      if (data.user) {
+        await sb.from('perfiles').insert({ id: data.user.id, email, empresa, rol: 'cliente' });
+        msg.textContent = 'Cuenta creada. Entrando al portal...';
+        abrirPortal();
       }
+    }
 
-      async function cargarArchivosCliente() {
-        var client = getClient();
-        if (!client || !usuarioActual) return;
-        var res = await client.from('archivos_portal').select('*').eq('user_id', usuarioActual.id).order('creado_en', { ascending: false });
-        var ulEnv = document.getElementById('listaEnviadosCliente');
-        var ulEnt = document.getElementById('listaEntregablesCliente');
-        if (!ulEnv || !ulEnt) return;
-        ulEnv.innerHTML = '';
-        ulEnt.innerHTML = '';
+    async function iniciarSesion() {
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPass').value.trim();
+      const msg = document.getElementById('authMsg');
 
-        (res.data || []).forEach(function (item) {
-          if (item.categoria === 'entrada_cliente') {
-            ulEnv.innerHTML += '<li class="flex justify-between items-center bg-[#1b1e24]/90 px-3 py-2 rounded">' +
-              '<span>[Archivo] ' + item.nombre_archivo + ' <em class="text-zinc-400">(' + (item.nota || 'Sin nota') + ')</em></span>' +
-              '<span class="text-emerald-400">Recibido</span></li>';
-          } else {
-            ulEnt.innerHTML += '<li class="flex justify-between items-center bg-emerald-950/40 border border-emerald-700/40 px-3 py-2.5 rounded">' +
-              '<div><div class="font-bold text-white text-xs">[Reporte] ' + item.nombre_archivo + '</div>' +
-              '<div class="text-[11px] text-zinc-300">' + (item.nota || 'Estudio de costeo finalizado') + '</div></div>' +
-              '<button type="button" data-dl-ruta="' + item.ruta_storage + '" data-dl-nombre="' + item.nombre_archivo + '" class="btn-descargar px-3 py-1.5 rounded bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold">Descargar</button></li>';
-          }
-        });
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) { msg.textContent = 'Credenciales incorrectas: ' + error.message; return; }
+      abrirPortal();
+    }
 
-        ulEnt.querySelectorAll('.btn-descargar').forEach(function (btn) {
-          btn.addEventListener('click', function () {
-            descargarArchivo(btn.getAttribute('data-dl-ruta'), btn.getAttribute('data-dl-nombre'));
-          });
-        });
-      }
+    async function cerrarSesion() {
+      await sb.auth.signOut();
+      usuarioActual = null;
+      document.getElementById('btnLogout').classList.add('hidden');
+      mostrarSeccion('vitrina');
+    }
 
-      async function cargarDatosAdmin() {
-        var client = getClient();
-        if (!client) return;
-        var perfilesRes = await client.from('perfiles').select('*').eq('rol', 'cliente');
-        var sel = document.getElementById('adminSelectCliente');
-        if (sel) {
-          sel.innerHTML = (perfilesRes.data || []).map(function (p) {
-            return '<option value="' + p.id + '|' + p.empresa + '">' + p.empresa + ' (' + p.email + ')</option>';
-          }).join('');
-        }
+    function agregarFilaPlantilla() {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="py-1.5 pr-2"><input class="w-24 bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-white" placeholder="SKU-01"></td>
+        <td class="py-1.5 pr-2"><input class="w-44 bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-white" placeholder="Producto"></td>
+        <td class="py-1.5 pr-2"><input class="w-20 bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-white" placeholder="Unidad/Kg"></td>
+        <td class="py-1.5 pr-2"><input type="number" class="w-24 bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-white" placeholder="0.00"></td>
+        <td class="py-1.5 pr-2"><input type="number" class="w-24 bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-white" placeholder="0.00"></td>
+        <td class="py-1.5"><input class="w-44 bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-white" placeholder="Insumos o merma"></td>
+      `;
+      document.getElementById('tablaPlantillaBody').appendChild(tr);
+    }
 
-        var plantillasRes = await client.from('plantillas_datos').select('*').order('creado_en', { ascending: false });
-        var adminPlantillas = document.getElementById('adminListaPlantillas');
-        if (adminPlantillas) {
-          adminPlantillas.innerHTML = (plantillasRes.data || []).map(function (pl) {
-            return '<div class="bg-[#1b1e24] p-3 rounded border border-white/10">' +
-              '<div class="font-bold text-white">' + pl.empresa + ' — ' + (pl.contenido ? pl.contenido.length : 0) + ' productos enviados</div>' +
-              '<pre class="text-[11px] text-zinc-300 mt-1 overflow-x-auto">' + JSON.stringify(pl.contenido, null, 2) + '</pre></div>';
-          }).join('');
-        }
-
-        var archivosRes = await client.from('archivos_portal').select('*').eq('categoria', 'entrada_cliente').order('creado_en', { ascending: false });
-        var adminArchivos = document.getElementById('adminListaArchivos');
-        if (adminArchivos) {
-          adminArchivos.innerHTML = (archivosRes.data || []).map(function (a) {
-            return '<li class="flex justify-between items-center bg-[#1b1e24] px-3 py-2 rounded">' +
-              '<span><strong>' + a.empresa + ':</strong> ' + a.nombre_archivo + '</span>' +
-              '<button type="button" data-dl-ruta="' + a.ruta_storage + '" data-dl-nombre="' + a.nombre_archivo + '" class="btn-admin-dl text-red-400 underline">Descargar</button></li>';
-          }).join('');
-
-          adminArchivos.querySelectorAll('.btn-admin-dl').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-              descargarArchivo(btn.getAttribute('data-dl-ruta'), btn.getAttribute('data-dl-nombre'));
-            });
+    async function guardarPlantillaCliente() {
+      const filas = [];
+      document.querySelectorAll('#tablaPlantillaBody tr').forEach(tr => {
+        const inputs = tr.querySelectorAll('input');
+        if (inputs[1].value.trim()) {
+          filas.push({
+            sku: inputs[0].value, producto: inputs[1].value, unidad: inputs[2].value,
+            precio_venta: inputs[3].value, costo_estimado: inputs[4].value, notas: inputs[5].value
           });
         }
-      }
+      });
+      if (!filas.length) return;
 
-      async function subirEntregaAdmin() {
-        var client = getClient();
-        if (!client) return;
-        var selEl = document.getElementById('adminSelectCliente');
-        var input = document.getElementById('adminInputArchivo');
-        var notaEl = document.getElementById('adminNotaEntrega');
-        var selVal = selEl ? selEl.value : '';
-        var nota = notaEl ? notaEl.value : '';
-        if (!selVal || !input || !input.files || !input.files.length) return;
+      const { error } = await sb.from('plantillas_datos').insert({
+        user_id: usuarioActual.id,
+        empresa: perfilActual.empresa,
+        tipo_plantilla: 'productos',
+        contenido: filas
+      });
+      document.getElementById('msgPlantilla').textContent = error
+        ? 'Error: ' + error.message
+        : '¡Plantilla enviada al laboratorio! Ya podemos procesarla.';
+      if (!error) renderizarDatosYArchivos();
+    }
 
-        var parts = selVal.split('|');
-        var clienteId = parts[0];
-        var empresa = parts[1];
-        var file = input.files[0];
-        var ruta = clienteId + '/entrega_' + Date.now() + '_' + file.name;
+    async function subirArchivo(categoria) {
+      const input = document.getElementById('inputArchivoCliente');
+      const nota = document.getElementById('notaArchivoCliente').value;
+      if (!input.files.length) return;
 
-        var upRes = await client.storage.from('hackflix-files').upload(ruta, file);
-        if (upRes.error) { alert(upRes.error.message); return; }
+      const file = input.files[0];
+      const ruta = `${usuarioActual.id}/${Date.now()}_${file.name}`;
 
-        await client.from('archivos_portal').insert({
-          user_id: clienteId,
-          empresa: empresa,
-          nombre_archivo: file.name,
-          ruta_storage: ruta,
-          categoria: 'entrega_final',
-          nota: nota
-        });
+      const { error: upErr } = await sb.storage.from('hackflix-files').upload(ruta, file);
+      if (upErr) { alert('Error subiendo archivo: ' + upErr.message); return; }
 
-        alert('¡Reporte publicado en el portal del cliente!');
-        input.value = '';
-      }
+      await sb.from('archivos_portal').insert({
+        user_id: usuarioActual.id,
+        empresa: perfilActual.empresa,
+        nombre_archivo: file.name,
+        ruta_storage: ruta,
+        categoria,
+        nota
+      });
 
-      async function abrirArchivoFirmado(rutaArchivo) {
-        var client = getClient();
-        if (!client) return;
-        var res = await client.storage.from('hackflix-files').createSignedUrl(rutaArchivo, 60);
-        if (!res.error && res.data && res.data.signedUrl) {
-          window.open(res.data.signedUrl, '_blank');
+      input.value = '';
+      document.getElementById('notaArchivoCliente').value = '';
+      cargarArchivosCliente();
+      renderizarDatosYArchivos();
+    }
+
+    async function descargarArchivo(ruta, nombre) {
+      const { data, error } = await sb.storage.from('hackflix-files').createSignedUrl(ruta, 60);
+      if (error) { alert(error.message); return; }
+      const a = document.createElement('a');
+      a.href = data.signedUrl;
+      a.download = nombre;
+      a.click();
+    }
+
+    async function cargarArchivosCliente() {
+      const { data } = await sb.from('archivos_portal').select('*').eq('user_id', usuarioActual.id).order('creado_en', { ascending: false });
+      const ulEnv = document.getElementById('listaEnviadosCliente');
+      const ulEnt = document.getElementById('listaEntregablesCliente');
+      ulEnv.innerHTML = '';
+      ulEnt.innerHTML = '';
+
+      (data || []).forEach(item => {
+        if (item.categoria === 'entrada_cliente') {
+          ulEnv.innerHTML += `<li class="flex justify-between items-center bg-zinc-900/80 px-3 py-2 rounded">
+            <span>[Archivo] ${item.nombre_archivo} <em class="text-zinc-500">(${item.nota || 'Sin nota'})</em></span>
+            <span class="text-emerald-400">Recibido</span>
+          </li>`;
+        } else {
+          ulEnt.innerHTML += `<li class="flex justify-between items-center bg-emerald-950/30 border border-emerald-700/40 px-3 py-2.5 rounded">
+            <div>
+              <div class="font-bold text-white text-xs">[Reporte] ${item.nombre_archivo}</div>
+              <div class="text-[11px] text-zinc-400">${item.nota || 'Estudio de costeo finalizado'}</div>
+            </div>
+            <button onclick="descargarArchivo('${item.ruta_storage}', '${item.nombre_archivo}')" class="px-3 py-1.5 rounded bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold">
+              Descargar
+            </button>
+          </li>`;
         }
+      });
+    }
+
+    async function cargarDatosAdmin() {
+      const { data: perfiles } = await sb.from('perfiles').select('*').eq('rol', 'cliente');
+      const sel = document.getElementById('adminSelectCliente');
+      sel.innerHTML = (perfiles || []).map(p => `<option value="${p.id}|${p.empresa}">${p.empresa} (${p.email})</option>`).join('');
+
+      const { data: plantillas } = await sb.from('plantillas_datos').select('*').order('creado_en', { ascending: false });
+      document.getElementById('adminListaPlantillas').innerHTML = (plantillas || []).map(pl => `
+        <div class="bg-zinc-900 p-3 rounded border border-zinc-800">
+          <div class="font-bold text-white">${pl.empresa} — ${pl.contenido.length} productos enviados</div>
+          <pre class="text-[11px] text-zinc-400 mt-1 overflow-x-auto">${JSON.stringify(pl.contenido, null, 2)}</pre>
+        </div>
+      `).join('');
+
+      const { data: archivos } = await sb.from('archivos_portal').select('*').eq('categoria', 'entrada_cliente').order('creado_en', { ascending: false });
+      document.getElementById('adminListaArchivos').innerHTML = (archivos || []).map(a => `
+        <li class="flex justify-between items-center bg-zinc-900 px-3 py-2 rounded">
+          <span><strong>${a.empresa}:</strong> ${a.nombre_archivo}</span>
+          <button onclick="descargarArchivo('${a.ruta_storage}', '${a.nombre_archivo}')" class="text-red-400 underline">Descargar</button>
+        </li>
+      `).join('');
+    }
+
+    async function subirEntregaAdmin() {
+      const selVal = document.getElementById('adminSelectCliente').value;
+      const input = document.getElementById('adminInputArchivo');
+      const nota = document.getElementById('adminNotaEntrega').value;
+      if (!selVal || !input.files.length) return;
+
+      const [clienteId, empresa] = selVal.split('|');
+      const file = input.files[0];
+      const ruta = `${clienteId}/entrega_${Date.now()}_${file.name}`;
+
+      const { error } = await sb.storage.from('hackflix-files').upload(ruta, file);
+      if (error) { alert(error.message); return; }
+
+      await sb.from('archivos_portal').insert({
+        user_id: clienteId,
+        empresa,
+        nombre_archivo: file.name,
+        ruta_storage: ruta,
+        categoria: 'entrega_final',
+        nota
+      });
+
+      alert('¡Reporte publicado en el portal del cliente!');
+      input.value = '';
+    }
+
+    async function abrirArchivoFirmado(rutaArchivo) {
+      const { data, error } = await sb
+        .storage
+        .from('hackflix-files')
+        .createSignedUrl(rutaArchivo, 60);
+
+      if (!error && data?.signedUrl) {
+        window.open(data.signedUrl, '_blank');
+      }
+    }
+
+    async function renderizarDatosYArchivos() {
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) return;
+
+      const contPlantillas = document.getElementById('vista-plantillas');
+      const contArchivos = document.getElementById('vista-archivos');
+
+      const { data: plantillas, error: errPlantillas } = await sb
+        .from('plantillas_datos')
+        .select('id, empresa, tipo_plantilla, estado, creado_en, contenido')
+        .eq('user_id', user.id)
+        .order('creado_en', { ascending: false });
+
+      if (!errPlantillas && contPlantillas) {
+        contPlantillas.innerHTML = (plantillas || []).map((p) => {
+          const filas = Array.isArray(p.contenido) ? p.contenido : [];
+          const itemsHtml = filas.map((item) => {
+            const precio = Number(item.precio_venta || 0);
+            const costo = Number(item.costo_estimado || 0);
+            const margen = (precio - costo).toFixed(2);
+            return `
+              <div class="text-sm border-t border-white/10 pt-2 mt-2 flex flex-wrap gap-3">
+                <span><strong>SKU:</strong> ${item.sku || '-'}</span>
+                <span><strong>Producto:</strong> ${item.producto || '-'}</span>
+                <span><strong>Unidad:</strong> ${item.unidad || '-'}</span>
+                <span><strong>Precio:</strong> $${precio}</span>
+                <span><strong>Costo:</strong> $${costo}</span>
+                <span><strong>Margen:</strong> $${margen}</span>
+              </div>
+            `;
+          }).join('');
+
+          return `
+            <div class="metal-card p-4 rounded-lg">
+              <div class="flex justify-between text-xs text-gray-400">
+                <span>Estado: <strong class="text-white">${p.estado || 'Recibido'}</strong></span>
+                <span>${p.creado_en ? new Date(p.creado_en).toLocaleString() : ''}</span>
+              </div>
+              ${itemsHtml}
+            </div>
+          `;
+        }).join('') || '<p class="text-sm text-gray-400">Aún no has enviado plantillas.</p>';
       }
 
-      async function renderizarDatosYArchivos() {
-        var client = getClient();
-        if (!client) return;
-        var userRes = await client.auth.getUser();
-        var user = userRes && userRes.data ? userRes.data.user : null;
-        if (!user) return;
+      const { data: archivos, error: errArchivos } = await sb
+        .from('archivos_portal')
+        .select('id, nombre_archivo, ruta_storage, categoria, nota')
+        .eq('user_id', user.id);
 
-        var contPlantillas = document.getElementById('vista-plantillas');
-        var contArchivos = document.getElementById('vista-archivos');
+      if (!errArchivos && contArchivos) {
+        contArchivos.innerHTML = (archivos || []).map((f) => {
+          const ruta = f.ruta_storage || `${user.id}/${f.nombre_archivo}`;
+          return `
+            <div class="metal-card p-3 rounded-lg flex items-center justify-between text-sm">
+              <div class="truncate pr-3">
+                <div class="font-medium">${f.nombre_archivo}</div>
+                <div class="text-xs text-gray-400">${f.categoria || ''}${f.nota ? ' · ' + f.nota : ''}</div>
+              </div>
+              <button
+                type="button"
+                onclick="abrirArchivoFirmado('${ruta}')"
+                class="crimson-btn px-3 py-1 rounded text-xs font-medium shrink-0"
+              >
+                Abrir
+              </button>
+            </div>
+          `;
+        }).join('') || '<p class="text-sm text-gray-400">Aún no hay archivos disponibles.</p>';
+      }
+    }
+  </script>
+</body>
+</html>
 
-        var plantillasRes = await client
-          .from('plantillas_datos')
-          .select('id, empresa, tipo_plant
