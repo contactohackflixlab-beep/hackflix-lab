@@ -486,6 +486,94 @@
       alert('¡Reporte publicado en el portal del cliente!');
       input.value = '';
     }
+    async function abrirArchivoFirmado(rutaArchivo) {
+  const { data, error } = await sb
+    .storage
+    .from('hackflix-files')
+    .createSignedUrl(rutaArchivo, 60);
+
+  if (!error && data?.signedUrl) {
+    window.open(data.signedUrl, '_blank');
+  }
+}
+
+async function renderizarDatosYArchivos() {
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return;
+
+  const contPlantillas = document.getElementById('vista-plantillas');
+  const contArchivos = document.getElementById('vista-archivos');
+
+  const { data: plantillas, error: errPlantillas } = await sb
+    .from('plantillas_datos')
+    .select('id, empresa, tipo_plantilla, estado, creado_en, contenido')
+    .eq('user_id', user.id)
+    .order('creado_en', { ascending: false });
+
+  if (!errPlantillas && contPlantillas) {
+    contPlantillas.innerHTML = (plantillas || []).map((p) => {
+      const filas = Array.isArray(p.contenido) ? p.contenido : [];
+      const itemsHtml = filas.map((item) => {
+        const precio = Number(item.precio_venta || 0);
+        const costo = Number(item.costo_estimado || 0);
+        const margen = (precio - costo).toFixed(2);
+        return `
+          <div class="text-sm border-t border-white/10 pt-2 mt-2 flex flex-wrap gap-3">
+            <span><strong>SKU:</strong> ${item.sku || '-'}</span>
+            <span><strong>Producto:</strong> ${item.producto || '-'}</span>
+            <span><strong>Unidad:</strong> ${item.unidad || '-'}</span>
+            <span><strong>Precio:</strong> $${precio}</span>
+            <span><strong>Costo:</strong> $${costo}</span>
+            <span><strong>Margen:</strong> $${margen}</span>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="metal-card p-4 rounded-lg">
+          <div class="flex justify-between text-xs text-gray-400">
+            <span>Estado: <strong class="text-white">${p.estado || 'Recibido'}</strong></span>
+            <span>${p.creado_en ? new Date(p.creado_en).toLocaleString() : ''}</span>
+          </div>
+          ${itemsHtml}
+        </div>
+      `;
+    }).join('') || '<p class="text-sm text-gray-400">Aún no has enviado plantillas.</p>';
+  }
+
+  const { data: archivos, error: errArchivos } = await sb
+    .from('archivos_portal')
+    .select('id, nombre_archivo, ruta_storage, categoria, nota')
+    .eq('user_id', user.id);
+
+  if (!errArchivos && contArchivos) {
+    contArchivos.innerHTML = (archivos || []).map((f) => {
+      const ruta = f.ruta_storage || `${user.id}/${f.nombre_archivo}`;
+      return `
+        <div class="metal-card p-3 rounded-lg flex items-center justify-between text-sm">
+          <div class="truncate pr-3">
+            <div class="font-medium">${f.nombre_archivo}</div>
+            <div class="text-xs text-gray-400">${f.categoria || ''}${f.nota ? ' · ' + f.nota : ''}</div>
+          </div>
+          <button
+            type="button"
+            onclick="abrirArchivoFirmado('${ruta}')"
+            class="crimson-btn px-3 py-1 rounded text-xs font-medium shrink-0"
+          >
+            Abrir
+          </button>
+        </div>
+      `;
+    }).join('') || '<p class="text-sm text-gray-400">Aún no hay archivos disponibles.</p>';
+  }
+}
+
+renderizarDatosYArchivos();
+    <!-- Contenedor para ver las plantillas enviadas -->
+<div id="vista-plantillas" class="mt-6 space-y-3"></div>
+
+<!-- Contenedor para ver los archivos subidos -->
+<div id="vista-archivos" class="mt-6 space-y-2"></div>
   </script>
 </body>
 </html>
