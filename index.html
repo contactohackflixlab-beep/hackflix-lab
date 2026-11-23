@@ -17,7 +17,7 @@
 
   <header class="border-b border-zinc-800 bg-zinc-950/90 sticky top-0 z-50 backdrop-blur">
     <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
-      <div id="brandLogo" class="flex items-center gap-3 cursor-pointer">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="mostrarSeccion('vitrina')">
         <div class="w-10 h-10 rounded bg-gradient-to-br from-red-700 to-red-950 flex items-center justify-center font-black text-white tracking-tighter border border-red-500/40">HF</div>
         <div>
           <span class="font-black text-xl tracking-wider text-white">HACK<span class="text-red-600">FLIX</span></span>
@@ -26,18 +26,12 @@
       </div>
 
       <nav class="flex flex-wrap items-center gap-2 sm:gap-3 text-sm">
-        <button id="btnNavHome" type="button" data-i18n="nav_home" class="px-3 py-1.5 rounded text-zinc-300 hover:text-white">Inicio</button>
-        <a id="btnNavQuote" data-i18n="nav_quote" href="#agendar-cotizacion" class="px-3 py-1.5 rounded text-zinc-300 hover:text-white">Cotizar</a>
-
-        <div class="flex items-center rounded border border-zinc-700 bg-zinc-900 p-0.5 text-xs font-bold" role="group" aria-label="Language">
-          <button id="btnLangEs" type="button" class="px-2.5 py-1 rounded bg-red-800 text-white cursor-pointer">ES</button>
-          <button id="btnLangEn" type="button" class="px-2.5 py-1 rounded text-zinc-400 hover:text-white cursor-pointer">EN</button>
-        </div>
-
-        <button id="btnPortalNav" type="button" data-i18n="nav_portal" class="px-4 py-2 rounded font-semibold crimson-btn text-white shadow-lg shadow-red-950/40 cursor-pointer">
+        <button onclick="mostrarSeccion('vitrina')" class="px-3 py-1.5 rounded text-zinc-300 hover:text-white">Inicio</button>
+        <a href="#agendar-cotizacion" onclick="mostrarSeccion('vitrina')" class="px-3 py-1.5 rounded text-zinc-300 hover:text-white">Cotizar</a>
+        <button id="btnPortalNav" onclick="abrirPortal()" class="px-4 py-2 rounded font-semibold crimson-btn text-white shadow-lg shadow-red-950/40">
           Acceso Clientes
         </button>
-        <button id="btnLogout" type="button" data-i18n="nav_logout" class="hidden px-3 py-1.5 rounded border border-zinc-700 text-zinc-300 hover:text-white cursor-pointer">
+        <button id="btnLogout" onclick="cerrarSesion()" class="hidden px-3 py-1.5 rounded border border-zinc-700 text-zinc-300 hover:text-white">
           Salir
         </button>
       </nav>
@@ -46,21 +40,20 @@
 
   <main id="sec-vitrina" class="flex-1">
     <section class="max-w-6xl mx-auto px-4 py-16 md:py-24 text-center">
-      <span data-i18n="hero_badge" class="inline-block px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-red-950/60 text-red-400 border border-red-800/50 mb-6">
+      <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-red-950/60 text-red-400 border border-red-800/50 mb-6">
         Claridad Financiera para Pequeñas, Medianas y Grandes Empresas
       </span>
       <h1 class="text-4xl md:text-6xl font-black text-white tracking-tight leading-tight max-w-4xl mx-auto">
-        <span data-i18n="hero_title_1">Sube los datos de tu negocio.</span>
-        <span data-i18n="hero_title_2" class="text-red-600">Nosotros calculamos tus costos y márgenes reales.</span>
+        Sube los datos de tu negocio. <span class="text-red-600">Nosotros calculamos tus costos y márgenes reales.</span>
       </h1>
-      <p data-i18n="hero_desc" class="mt-6 text-lg text-zinc-400 max-w-2xl mx-auto">
+      <p class="mt-6 text-lg text-zinc-400 max-w-2xl mx-auto">
         Sin software complicado ni curvas de aprendizaje. Llena nuestras plantillas guiadas o sube tus archivos actuales; nuestro laboratorio organiza tu información y te entrega la radiografía exacta de rentabilidad por producto.
       </p>
       <div class="mt-10 flex flex-wrap justify-center gap-4">
-        <button id="btnHeroPortal" type="button" data-i18n="hero_cta_portal" class="px-8 py-4 rounded-lg font-bold text-white crimson-btn shadow-xl shadow-red-950/50 text-base cursor-pointer">
+        <button onclick="abrirPortal()" class="px-8 py-4 rounded-lg font-bold text-white crimson-btn shadow-xl shadow-red-950/50 text-base">
           Entrar al Portal y Subir Datos
         </button>
-        <a data-i18n="hero_cta_quote" href="#agendar-cotizacion" class="px-8 py-4 rounded-lg font-semibold text-zinc-200 border border-zinc-700 hover:bg-zinc-800/60">
+        <a href="#agendar-cotizacion" class="px-8 py-4 rounded-lg font-semibold text-zinc-200 border border-zinc-700 hover:bg-zinc-800/60">
           Agendar Reunión / Cotizar
         </a>
       </div>
@@ -68,28 +61,28 @@
 
     <section id="como-funciona" class="max-w-6xl mx-auto px-4 pb-16 grid md:grid-cols-3 gap-6">
       <div class="metal-card p-6 rounded-xl">
-        <div data-i18n="step1_num" class="text-red-500 font-black text-2xl mb-2">01. Carga Ordenada</div>
-        <h3 data-i18n="step1_title" class="text-white font-bold text-lg mb-2">Plantillas o Archivos Libres</h3>
-        <p data-i18n="step1_desc" class="text-zinc-400 text-sm">Completa nuestras plantillas web de productos e insumos o sube tus facturas, listas de precios y hojas de cálculo directamente a tu bóveda privada.</p>
+        <div class="text-red-500 font-black text-2xl mb-2">01. Carga Ordenada</div>
+        <h3 class="text-white font-bold text-lg mb-2">Plantillas o Archivos Libres</h3>
+        <p class="text-zinc-400 text-sm">Completa nuestras plantillas web de productos e insumos o sube tus facturas, listas de precios y hojas de cálculo directamente a tu bóveda privada.</p>
       </div>
       <div class="metal-card p-6 rounded-xl">
-        <div data-i18n="step2_num" class="text-red-500 font-black text-2xl mb-2">02. Ingeniería de Costeo</div>
-        <h3 data-i18n="step2_title" class="text-white font-bold text-lg mb-2">Nosotros Hacemos el Cálculo</h3>
-        <p data-i18n="step2_desc" class="text-zinc-400 text-sm">Estructuramos tus costos directos, mermas, comisiones y gastos indirectos para determinar el costo unitario real y el margen de cada SKU.</p>
+        <div class="text-red-500 font-black text-2xl mb-2">02. Ingeniería de Costeo</div>
+        <h3 class="text-white font-bold text-lg mb-2">Nosotros Hacemos el Cálculo</h3>
+        <p class="text-zinc-400 text-sm">Estructuramos tus costos directos, mermas, comisiones y gastos indirectos para determinar el costo unitario real y el margen de cada SKU.</p>
       </div>
       <div class="metal-card p-6 rounded-xl">
-        <div data-i18n="step3_num" class="text-red-500 font-black text-2xl mb-2">03. Descarga Ejecutiva</div>
-        <h3 data-i18n="step3_title" class="text-white font-bold text-lg mb-2">Decisiones con Certeza</h3>
-        <p data-i18n="step3_desc" class="text-zinc-400 text-sm">Recibe en tu mismo portal tu matriz limpia de costeo, semáforo de productos rentables vs. productos en pérdida y alertas de precios.</p>
+        <div class="text-red-500 font-black text-2xl mb-2">03. Descarga Ejecutiva</div>
+        <h3 class="text-white font-bold text-lg mb-2">Decisiones con Certeza</h3>
+        <p class="text-zinc-400 text-sm">Recibe en tu mismo portal tu matriz limpia de costeo, semáforo de productos rentables vs. productos en pérdida y alertas de precios.</p>
       </div>
     </section>
 
     <section id="agendar-cotizacion" class="max-w-6xl mx-auto px-4 pb-20">
       <div class="metal-card p-8 md:p-10 rounded-2xl border border-red-900/40">
         <div class="max-w-2xl">
-          <span data-i18n="quote_badge" class="text-xs font-bold uppercase tracking-wider text-red-500">Atención Directa</span>
-          <h2 data-i18n="quote_title" class="text-2xl md:text-3xl font-black text-white mt-1">Agenda tu reunión y solicita tu cotización</h2>
-          <p data-i18n="quote_desc" class="text-sm text-zinc-400 mt-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-red-500">Atención Directa</span>
+          <h2 class="text-2xl md:text-3xl font-black text-white mt-1">Agenda tu reunión y solicita tu cotización</h2>
+          <p class="text-sm text-zinc-400 mt-2">
             Escríbenos para revisar el tamaño de tu catálogo, el tipo de costeo que necesitas y coordinar una sesión.
           </p>
         </div>
@@ -97,13 +90,12 @@
         <div class="grid md:grid-cols-2 gap-6 mt-8">
           <div class="bg-zinc-950/70 border border-zinc-800 p-5 rounded-xl flex flex-col justify-between gap-4">
             <div>
-              <div data-i18n="phone_label" class="text-xs uppercase tracking-wider text-zinc-400">WhatsApp & Llamadas</div>
+              <div class="text-xs uppercase tracking-wider text-zinc-400">WhatsApp & Llamadas</div>
               <div class="text-xl font-bold text-white mt-1">+507 6321-2451</div>
-              <p data-i18n="phone_desc" class="text-xs text-zinc-400 mt-1">Ideal para coordinar rápido una reunión de diagnóstico o cotización.</p>
+              <p class="text-xs text-zinc-400 mt-1">Ideal para coordinar rápido una reunión de diagnóstico o cotización.</p>
             </div>
             <div class="flex flex-wrap gap-3">
               <a
-                data-i18n="btn_whatsapp"
                 href="https://wa.me/50763212451?text=Hola%20HACKFLIX%20LAB%2C%20quiero%20agendar%20una%20reuni%C3%B3n%20para%20cotizar%20un%20estudio%20de%20costos%20y%20m%C3%A1rgenes."
                 target="_blank"
                 rel="noopener noreferrer"
@@ -112,7 +104,6 @@
                 Escribir por WhatsApp
               </a>
               <a
-                data-i18n="btn_call"
                 href="tel:+50763212451"
                 class="px-4 py-2.5 rounded-lg text-xs font-semibold text-zinc-200 border border-zinc-700 hover:bg-zinc-800"
               >
@@ -123,13 +114,12 @@
 
           <div class="bg-zinc-950/70 border border-zinc-800 p-5 rounded-xl flex flex-col justify-between gap-4">
             <div>
-              <div data-i18n="email_label" class="text-xs uppercase tracking-wider text-zinc-400">Correo Electrónico</div>
-              <div class="text-sm sm:text-xl font-bold text-white mt-1">contacto.hackflixlab@gmail.com</div>
-              <p data-i18n="email_desc" class="text-xs text-zinc-400 mt-1">Envía los detalles de tu empresa, horarios disponibles o información inicial.</p>
+              <div class="text-xs uppercase tracking-wider text-zinc-400">Correo Electrónico</div>
+              <div class="text-lg sm:text-xl font-bold text-white mt-1 break-all">contacto.hackflixlab@gmail.com</div>
+              <p class="text-xs text-zinc-400 mt-1">Envía los detalles de tu empresa, horarios disponibles o información inicial.</p>
             </div>
             <div>
               <a
-                data-i18n="btn_email"
                 href="mailto:contacto.hackflixlab@gmail.com?subject=Solicitud%20de%20cotizaci%C3%B3n%20y%20reuni%C3%B3n%20-%20HACKFLIX%20LAB&body=Hola%2C%20me%20gustar%C3%ADa%20agendar%20una%20reuni%C3%B3n%20para%20cotizar.%0A%0AEmpresa%3A%20%0ACantidad%20aproximada%20de%20productos%20o%20servicios%3A%20%0AHorarios%20disponibles%3A%20"
                 class="inline-block px-4 py-2.5 rounded-lg text-xs font-semibold text-zinc-200 border border-zinc-700 hover:bg-zinc-800"
               >
@@ -144,25 +134,25 @@
 
   <section id="sec-auth" class="hidden flex-1 flex items-center justify-center px-4 py-12">
     <div class="metal-card w-full max-w-md p-8 rounded-2xl shadow-2xl">
-      <h2 data-i18n="auth_title" class="text-2xl font-bold text-white mb-1">Portal Privado de Clientes</h2>
-      <p data-i18n="auth_desc" class="text-sm text-zinc-400 mb-6">Ingresa o registra tu empresa para gestionar tus plantillas y reportes.</p>
+      <h2 class="text-2xl font-bold text-white mb-1">Portal Privado de Clientes</h2>
+      <p class="text-sm text-zinc-400 mb-6">Ingresa o registra tu empresa para gestionar tus plantillas y reportes.</p>
 
       <div class="space-y-4">
         <div>
-          <label data-i18n="lbl_company" class="block text-xs uppercase tracking-wider text-zinc-400 mb-1">Nombre de la Empresa (solo registro)</label>
+          <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-1">Nombre de la Empresa (solo registro)</label>
           <input id="authEmpresa" type="text" placeholder="Ej. Distribuidora Central S.A." class="w-full px-3 py-2.5 rounded bg-zinc-900 border border-zinc-700 text-white text-sm" />
         </div>
         <div>
-          <label data-i18n="lbl_email" class="block text-xs uppercase tracking-wider text-zinc-400 mb-1">Correo electrónico</label>
+          <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-1">Correo electrónico</label>
           <input id="authEmail" type="email" placeholder="gerencia@tuempresa.com" class="w-full px-3 py-2.5 rounded bg-zinc-900 border border-zinc-700 text-white text-sm" />
         </div>
         <div>
-          <label data-i18n="lbl_pass" class="block text-xs uppercase tracking-wider text-zinc-400 mb-1">Contraseña</label>
+          <label class="block text-xs uppercase tracking-wider text-zinc-400 mb-1">Contraseña</label>
           <input id="authPass" type="password" placeholder="Mínimo 6 caracteres" class="w-full px-3 py-2.5 rounded bg-zinc-900 border border-zinc-700 text-white text-sm" />
         </div>
         <div class="flex gap-3 pt-2">
-          <button id="btnLogin" type="button" data-i18n="btn_login" class="flex-1 py-2.5 rounded font-bold text-white crimson-btn text-sm cursor-pointer">Iniciar Sesión</button>
-          <button id="btnSignup" type="button" data-i18n="btn_signup" class="flex-1 py-2.5 rounded font-semibold text-zinc-200 border border-zinc-600 hover:bg-zinc-800 text-sm cursor-pointer">Crear Cuenta</button>
+          <button onclick="iniciarSesion()" class="flex-1 py-2.5 rounded font-bold text-white crimson-btn text-sm">Iniciar Sesión</button>
+          <button onclick="registrarUsuario()" class="flex-1 py-2.5 rounded font-semibold text-zinc-200 border border-zinc-600 hover:bg-zinc-800 text-sm">Crear Cuenta</button>
         </div>
         <p id="authMsg" class="text-xs text-red-400 text-center pt-1"></p>
       </div>
@@ -173,30 +163,30 @@
     <div class="flex flex-wrap items-center justify-between gap-4 border-b border-zinc-800 pb-4">
       <div>
         <h2 class="text-2xl font-bold text-white" id="lblEmpresaCliente">Mi Empresa</h2>
-        <p data-i18n="client_sub" class="text-sm text-zinc-400">Completa tus plantillas, sube respaldos y descarga tus estudios de costeo listos.</p>
+        <p class="text-sm text-zinc-400">Completa tus plantillas, sube respaldos y descarga tus estudios de costeo listos.</p>
       </div>
-      <span data-i18n="vault_badge" class="px-3 py-1 rounded-full text-xs bg-emerald-950/70 text-emerald-400 border border-emerald-700/40">Bóveda Cifrada Activa</span>
+      <span class="px-3 py-1 rounded-full text-xs bg-emerald-950/70 text-emerald-400 border border-emerald-700/40">Bóveda Cifrada Activa</span>
     </div>
 
     <div class="metal-card p-6 rounded-xl">
       <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
         <div>
-          <h3 data-i18n="tpl_title" class="text-lg font-bold text-white">1. Plantilla de Productos y Precios</h3>
-          <p data-i18n="tpl_desc" class="text-xs text-zinc-400">Agrega tus productos principales. Nosotros cruzaremos esta tabla con tus insumos y gastos.</p>
+          <h3 class="text-lg font-bold text-white">1. Plantilla de Productos y Precios</h3>
+          <p class="text-xs text-zinc-400">Agrega tus productos principales. Nosotros cruzaremos esta tabla con tus insumos y gastos.</p>
         </div>
-        <button id="btnAddRow" type="button" data-i18n="btn_add_row" class="px-3 py-1.5 rounded text-xs font-semibold bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-600 cursor-pointer">+ Añadir Fila</button>
+        <button onclick="agregarFilaPlantilla()" class="px-3 py-1.5 rounded text-xs font-semibold bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-600">+ Añadir Fila</button>
       </div>
 
       <div class="overflow-x-auto">
         <table class="w-full text-left text-sm border-collapse">
           <thead>
             <tr class="border-b border-zinc-700 text-zinc-400 text-xs uppercase">
-              <th data-i18n="th_sku" class="py-2 pr-2">SKU / Código</th>
-              <th data-i18n="th_prod" class="py-2 pr-2">Nombre del Producto</th>
-              <th data-i18n="th_unit" class="py-2 pr-2">Unidad</th>
-              <th data-i18n="th_price" class="py-2 pr-2">Precio Venta ($)</th>
-              <th data-i18n="th_cost" class="py-2 pr-2">Costo Directo Est. ($)</th>
-              <th data-i18n="th_notes" class="py-2">Notas / Insumos clave</th>
+              <th class="py-2 pr-2">SKU / Código</th>
+              <th class="py-2 pr-2">Nombre del Producto</th>
+              <th class="py-2 pr-2">Unidad</th>
+              <th class="py-2 pr-2">Precio Venta ($)</th>
+              <th class="py-2 pr-2">Costo Directo Est. ($)</th>
+              <th class="py-2">Notas / Insumos clave</th>
             </tr>
           </thead>
           <tbody id="tablaPlantillaBody" class="divide-y divide-zinc-800"></tbody>
@@ -205,7 +195,7 @@
 
       <div class="mt-4 flex items-center justify-between">
         <span id="msgPlantilla" class="text-xs text-emerald-400"></span>
-        <button id="btnSendTpl" type="button" data-i18n="btn_send_tpl" class="px-5 py-2.5 rounded font-bold text-sm text-white crimson-btn cursor-pointer">
+        <button onclick="guardarPlantillaCliente()" class="px-5 py-2.5 rounded font-bold text-sm text-white crimson-btn">
           Enviar Plantilla al Laboratorio
         </button>
       </div>
@@ -213,24 +203,24 @@
 
     <div class="grid md:grid-cols-2 gap-6">
       <div class="metal-card p-6 rounded-xl space-y-4">
-        <h3 data-i18n="up_title" class="text-lg font-bold text-white">2. Subir Archivos y Facturas</h3>
-        <p data-i18n="up_desc" class="text-xs text-zinc-400">Sube Excel, CSV, PDF de proveedores, recetas o listas de gastos fijos.</p>
+        <h3 class="text-lg font-bold text-white">2. Subir Archivos y Facturas</h3>
+        <p class="text-xs text-zinc-400">Sube Excel, CSV, PDF de proveedores, recetas o listas de gastos fijos.</p>
         <input id="inputArchivoCliente" type="file" class="block w-full text-xs text-zinc-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-900 file:text-white hover:file:bg-red-800" />
         <input id="notaArchivoCliente" type="text" placeholder="Nota opcional (ej. Facturas de insumos marzo)" class="w-full px-3 py-2 rounded bg-zinc-900 border border-zinc-700 text-white text-xs" />
-        <button id="btnUploadClient" type="button" data-i18n="btn_upload" class="w-full py-2.5 rounded font-bold text-sm text-white crimson-btn cursor-pointer">
+        <button onclick="subirArchivo('entrada_cliente')" class="w-full py-2.5 rounded font-bold text-sm text-white crimson-btn">
           Subir Archivo al Portal
         </button>
         <div class="pt-2">
-          <h4 data-i18n="sent_files" class="text-xs font-semibold uppercase text-zinc-400 mb-2">Tus archivos enviados</h4>
+          <h4 class="text-xs font-semibold uppercase text-zinc-400 mb-2">Tus archivos enviados</h4>
           <ul id="listaEnviadosCliente" class="space-y-2 text-xs text-zinc-300"></ul>
         </div>
       </div>
 
       <div class="metal-card p-6 rounded-xl space-y-4 border-red-900/40">
-        <h3 data-i18n="rep_title" class="text-lg font-bold text-white">3. Tus Reportes de Costos Listos</h3>
-        <p data-i18n="rep_desc" class="text-xs text-zinc-400">Aquí aparecerán tus matrices de costeo y márgenes calculados listos para descargar.</p>
+        <h3 class="text-lg font-bold text-white">3. Tus Reportes de Costos Listos</h3>
+        <p class="text-xs text-zinc-400">Aquí aparecerán tus matrices de costeo y márgenes calculados listos para descargar.</p>
         <ul id="listaEntregablesCliente" class="space-y-3 text-sm">
-          <li data-i18n="rep_empty" class="text-xs text-zinc-500 italic">Aún no hay reportes finalizados. Te avisaremos en cuanto estén listos.</li>
+          <li class="text-xs text-zinc-500 italic">Aún no hay reportes finalizados. Te avisaremos en cuanto estén listos.</li>
         </ul>
       </div>
     </div>
@@ -238,28 +228,28 @@
 
   <section id="sec-admin" class="hidden flex-1 max-w-6xl w-full mx-auto px-4 py-10 space-y-8">
     <div class="border-b border-zinc-800 pb-4">
-      <span data-i18n="admin_badge" class="text-xs font-bold uppercase tracking-wider text-red-500">Modo Laboratorio Interno</span>
-      <h2 data-i18n="admin_title" class="text-2xl font-bold text-white">Bandeja de Empresas y Entregables</h2>
-      <p data-i18n="admin_desc" class="text-sm text-zinc-400">Descarga la información enviada por tus clientes y súbeles su reporte final de costeo.</p>
+      <span class="text-xs font-bold uppercase tracking-wider text-red-500">Modo Laboratorio Interno</span>
+      <h2 class="text-2xl font-bold text-white">Bandeja de Empresas y Entregables</h2>
+      <p class="text-sm text-zinc-400">Descarga la información enviada por tus clientes y súbeles su reporte final de costeo.</p>
     </div>
 
     <div class="metal-card p-6 rounded-xl">
-      <h3 data-i18n="admin_tpl_title" class="text-lg font-bold text-white mb-3">Plantillas Web Recibidas</h3>
+      <h3 class="text-lg font-bold text-white mb-3">Plantillas Web Recibidas</h3>
       <div id="adminListaPlantillas" class="space-y-3 text-xs"></div>
     </div>
 
     <div class="grid md:grid-cols-2 gap-6">
       <div class="metal-card p-6 rounded-xl">
-        <h3 data-i18n="admin_files_title" class="text-lg font-bold text-white mb-3">Archivos Subidos por Clientes</h3>
+        <h3 class="text-lg font-bold text-white mb-3">Archivos Subidos por Clientes</h3>
         <ul id="adminListaArchivos" class="space-y-2 text-xs"></ul>
       </div>
 
       <div class="metal-card p-6 rounded-xl space-y-4">
-        <h3 data-i18n="admin_pub_title" class="text-lg font-bold text-white">Subir Costeo Final a un Cliente</h3>
+        <h3 class="text-lg font-bold text-white">Subir Costeo Final a un Cliente</h3>
         <select id="adminSelectCliente" class="w-full px-3 py-2 rounded bg-zinc-900 border border-zinc-700 text-white text-xs"></select>
         <input id="adminInputArchivo" type="file" class="block w-full text-xs text-zinc-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-emerald-800 file:text-white" />
         <input id="adminNotaEntrega" type="text" placeholder="Ej. Matriz de Costos y Márgenes Final v1.xlsx" class="w-full px-3 py-2 rounded bg-zinc-900 border border-zinc-700 text-white text-xs" />
-        <button id="btnPublishAdmin" type="button" data-i18n="btn_publish" class="w-full py-2.5 rounded font-bold text-sm bg-emerald-700 hover:bg-emerald-600 text-white cursor-pointer">
+        <button onclick="subirEntregaAdmin()" class="w-full py-2.5 rounded font-bold text-sm bg-emerald-700 hover:bg-emerald-600 text-white">
           Publicar Reporte en Portal del Cliente
         </button>
       </div>
@@ -269,7 +259,7 @@
   <footer class="border-t border-zinc-800 bg-zinc-950/90 mt-auto">
     <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-400">
       <div>
-        <span class="font-bold text-zinc-200">HACKFLIX LAB</span> — <span data-i18n="footer_contact">Reuniones y cotizaciones:</span>
+        <span class="font-bold text-zinc-200">HACKFLIX LAB</span> — Reuniones y cotizaciones:
         <a href="mailto:contacto.hackflixlab@gmail.com" class="text-red-400 hover:underline">contacto.hackflixlab@gmail.com</a>
       </div>
       <div class="flex items-center gap-4">
@@ -279,243 +269,223 @@
   </footer>
 
   <script>
-    (function () {
-      const SUPABASE_URL = 'https://urcjqoxtynhzgqbqkmvq.supabase.co';
-      const SUPABASE_ANON_KEY = 'sb_publishable_Xm8CFzOqP6iZc3kmFUGOGA_r4ANm699';
-      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const SUPABASE_URL = 'https://urcjqoxtynhzgqbqkmvq.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_Xm8CFzOqP6iZc3kmFUGOGA_r4ANm699';
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-      const TRADUCCIONES = {
-        es: {
-          title: 'HACKFLIX LAB | Ingeniería de Costos & Márgenes',
-          nav_home: 'Inicio',
-          nav_quote: 'Cotizar',
-          nav_portal: 'Acceso Clientes',
-          nav_logout: 'Salir',
-          hero_badge: 'Claridad Financiera para Pequeñas, Medianas y Grandes Empresas',
-          hero_title_1: 'Sube los datos de tu negocio.',
-          hero_title_2: 'Nosotros calculamos tus costos y márgenes reales.',
-          hero_desc: 'Sin software complicado ni curvas de aprendizaje. Llena nuestras plantillas guiadas o sube tus archivos actuales; nuestro laboratorio organiza tu información y te entrega la radiografía exacta de rentabilidad por producto.',
-          hero_cta_portal: 'Entrar al Portal y Subir Datos',
-          hero_cta_quote: 'Agendar Reunión / Cotizar',
-          step1_num: '01. Carga Ordenada',
-          step1_title: 'Plantillas o Archivos Libres',
-          step1_desc: 'Completa nuestras plantillas web de productos e insumos o sube tus facturas, listas de precios y hojas de cálculo directamente a tu bóveda privada.',
-          step2_num: '02. Ingeniería de Costeo',
-          step2_title: 'Nosotros Hacemos el Cálculo',
-          step2_desc: 'Estructuramos tus costos directos, mermas, comisiones y gastos indirectos para determinar el costo unitario real y el margen de cada SKU.',
-          step3_num: '03. Descarga Ejecutiva',
-          step3_title: 'Decisiones con Certeza',
-          step3_desc: 'Recibe en tu mismo portal tu matriz limpia de costeo, semáforo de productos rentables vs. productos en pérdida y alertas de precios.',
-          quote_badge: 'Atención Directa',
-          quote_title: 'Agenda tu reunión y solicita tu cotización',
-          quote_desc: 'Escríbenos para revisar el tamaño de tu catálogo, el tipo de costeo que necesitas y coordinar una sesión.',
-          phone_label: 'WhatsApp & Llamadas',
-          phone_desc: 'Ideal para coordinar rápido una reunión de diagnóstico o cotización.',
-          btn_whatsapp: 'Escribir por WhatsApp',
-          btn_call: 'Llamar ahora',
-          email_label: 'Correo Electrónico',
-          email_desc: 'Envía los detalles de tu empresa, horarios disponibles o información inicial.',
-          btn_email: 'Enviar Correo para Cotizar',
-          auth_title: 'Portal Privado de Clientes',
-          auth_desc: 'Ingresa o registra tu empresa para gestionar tus plantillas y reportes.',
-          lbl_company: 'Nombre de la Empresa (solo registro)',
-          lbl_email: 'Correo electrónico',
-          lbl_pass: 'Contraseña',
-          btn_login: 'Iniciar Sesión',
-          btn_signup: 'Crear Cuenta',
-          client_sub: 'Completa tus plantillas, sube respaldos y descarga tus estudios de costeo listos.',
-          vault_badge: 'Bóveda Cifrada Activa',
-          tpl_title: '1. Plantilla de Productos y Precios',
-          tpl_desc: 'Agrega tus productos principales. Nosotros cruzaremos esta tabla con tus insumos y gastos.',
-          btn_add_row: '+ Añadir Fila',
-          th_sku: 'SKU / Código',
-          th_prod: 'Nombre del Producto',
-          th_unit: 'Unidad',
-          th_price: 'Precio Venta ($)',
-          th_cost: 'Costo Directo Est. ($)',
-          th_notes: 'Notas / Insumos clave',
-          btn_send_tpl: 'Enviar Plantilla al Laboratorio',
-          up_title: '2. Subir Archivos y Facturas',
-          up_desc: 'Sube Excel, CSV, PDF de proveedores, recetas o listas de gastos fijos.',
-          btn_upload: 'Subir Archivo al Portal',
-          sent_files: 'Tus archivos enviados',
-          rep_title: '3. Tus Reportes de Costos Listos',
-          rep_desc: 'Aquí aparecerán tus matrices de costeo y márgenes calculados listos para descargar.',
-          rep_empty: 'Aún no hay reportes finalizados. Te avisaremos en cuanto estén listos.',
-          admin_badge: 'Modo Laboratorio Interno',
-          admin_title: 'Bandeja de Empresas y Entregables',
-          admin_desc: 'Descarga la información enviada por tus clientes y súbeles su reporte final de costeo.',
-          admin_tpl_title: 'Plantillas Web Recibidas',
-          admin_files_title: 'Archivos Subidos por Clientes',
-          admin_pub_title: 'Subir Costeo Final a un Cliente',
-          btn_publish: 'Publicar Reporte en Portal del Cliente',
-          footer_contact: 'Reuniones y cotizaciones:',
-          ph_company: 'Ej. Distribuidora Central S.A.',
-          ph_email: 'gerencia@tuempresa.com',
-          ph_pass: 'Mínimo 6 caracteres',
-          ph_file_note: 'Nota opcional (ej. Facturas de insumos marzo)',
-          ph_admin_note: 'Ej. Matriz de Costos y Márgenes Final v1.xlsx',
-          ph_sku: 'SKU-01',
-          ph_prod: 'Producto',
-          ph_unit: 'Unidad/Kg',
-          ph_notes: 'Insumos o merma',
-          status_received: 'Recibido',
-          no_note: 'Sin nota',
-          default_report_note: 'Estudio de costeo finalizado',
-          btn_download: 'Descargar',
-          tag_file: '[Archivo]',
-          tag_report: '[Reporte]'
-        },
-        en: {
-          title: 'HACKFLIX LAB | Costing & Margin Engineering',
-          nav_home: 'Home',
-          nav_quote: 'Get a Quote',
-          nav_portal: 'Client Portal',
-          nav_logout: 'Sign Out',
-          hero_badge: 'Financial Clarity for Small, Medium & Large Businesses',
-          hero_title_1: 'Upload your business data.',
-          hero_title_2: 'We calculate your real costs and margins.',
-          hero_desc: 'No complicated software or steep learning curves. Fill out our guided templates or upload your current files; our lab organizes your data and delivers a clear profitability breakdown per product.',
-          hero_cta_portal: 'Open Portal & Upload Data',
-          hero_cta_quote: 'Book a Call / Get a Quote',
-          step1_num: '01. Structured Intake',
-          step1_title: 'Guided Templates or Raw Files',
-          step1_desc: 'Complete our web product and ingredient templates or upload supplier invoices, price lists, and spreadsheets straight to your private vault.',
-          step2_num: '02. Cost Engineering',
-          step2_title: 'We Run the Calculations',
-          step2_desc: 'We structure direct costs, waste/shrinkage, commissions, and overhead to determine the true unit cost and margin of every SKU.',
-          step3_num: '03. Executive Delivery',
-          step3_title: 'Decide with Confidence',
-          step3_desc: 'Receive your clean costing matrix, profitable vs. losing product status, and pricing alerts right inside your portal.',
-          quote_badge: 'Direct Contact',
-          quote_title: 'Book a meeting and request a quote',
-          quote_desc: 'Reach out to review your catalog size, costing needs, and schedule a session.',
-          phone_label: 'WhatsApp & Calls',
-          phone_desc: 'Fastest way to coordinate a discovery call or quote.',
-          btn_whatsapp: 'Message on WhatsApp',
-          btn_call: 'Call now',
-          email_label: 'Email',
-          email_desc: 'Send your company details, availability, or initial files.',
-          btn_email: 'Email for a Quote',
-          auth_title: 'Private Client Portal',
-          auth_desc: 'Sign in or register your company to manage your templates and reports.',
-          lbl_company: 'Company Name (sign up only)',
-          lbl_email: 'Email address',
-          lbl_pass: 'Password',
-          btn_login: 'Sign In',
-          btn_signup: 'Create Account',
-          client_sub: 'Complete your templates, upload supporting files, and download your finished costing studies.',
-          vault_badge: 'Encrypted Vault Active',
-          tpl_title: '1. Product & Pricing Template',
-          tpl_desc: 'Add your main products. We will cross-reference this table with your inputs and expenses.',
-          btn_add_row: '+ Add Row',
-          th_sku: 'SKU / Code',
-          th_prod: 'Product Name',
-          th_unit: 'Unit',
-          th_price: 'Sale Price ($)',
-          th_cost: 'Est. Direct Cost ($)',
-          th_notes: 'Notes / Key Inputs',
-          btn_send_tpl: 'Send Template to Lab',
-          up_title: '2. Upload Files & Invoices',
-          up_desc: 'Upload Excel, CSV, supplier PDFs, recipes, or fixed expense lists.',
-          btn_upload: 'Upload File to Portal',
-          sent_files: 'Uploaded files',
-          rep_title: '3. Your Completed Cost Reports',
-          rep_desc: 'Your finished costing matrices and margin analyses will appear here for download.',
-          rep_empty: 'No completed reports yet. We will let you know as soon as they are ready.',
-          admin_badge: 'Internal Lab Mode',
-          admin_title: 'Companies & Deliverables Inbox',
-          admin_desc: 'Download client submissions and publish their final costing reports.',
-          admin_tpl_title: 'Received Web Templates',
-          admin_files_title: 'Files Uploaded by Clients',
-          admin_pub_title: 'Publish Final Costing to a Client',
-          btn_publish: 'Publish Report to Client Portal',
-          footer_contact: 'Meetings & quotes:',
-          ph_company: 'e.g. Central Distribution Inc.',
-          ph_email: 'management@yourcompany.com',
-          ph_pass: 'At least 6 characters',
-          ph_file_note: 'Optional note (e.g. March supplier invoices)',
-          ph_admin_note: 'e.g. Final Cost & Margin Matrix v1.xlsx',
-          ph_sku: 'SKU-01',
-          ph_prod: 'Product',
-          ph_unit: 'Unit/Kg',
-          ph_notes: 'Inputs or shrinkage',
-          status_received: 'Received',
-          no_note: 'No note',
-          default_report_note: 'Completed costing study',
-          btn_download: 'Download',
-          tag_file: '[File]',
-          tag_report: '[Report]'
-        }
-      };
+    let usuarioActual = null;
+    let perfilActual = null;
 
-      let idiomaActual = 'es';
-      try {
-        idiomaActual = localStorage.getItem('hackflix_lang') === 'en' ? 'en' : 'es';
-      } catch (e) {
-        idiomaActual = 'es';
+    function mostrarSeccion(nombre) {
+      ['vitrina', 'auth', 'cliente', 'admin'].forEach(s => {
+        document.getElementById('sec-' + s).classList.add('hidden');
+      });
+      document.getElementById('sec-' + nombre).classList.remove('hidden');
+    }
+
+    async function abrirPortal() {
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) {
+        mostrarSeccion('auth');
+        return;
       }
+      usuarioActual = session.user;
+      document.getElementById('btnLogout').classList.remove('hidden');
 
-      let usuarioActual = null;
-      let perfilActual = null;
+      const { data: perfil } = await sb.from('perfiles').select('*').eq('id', usuarioActual.id).single();
+      perfilActual = perfil || { empresa: usuarioActual.email, rol: 'cliente' };
 
-      function cambiarIdioma(lang) {
-        idiomaActual = lang === 'en' ? 'en' : 'es';
-        try {
-          localStorage.setItem('hackflix_lang', idiomaActual);
-        } catch (e) {}
-
-        document.documentElement.lang = idiomaActual;
-        const t = TRADUCCIONES[idiomaActual] || TRADUCCIONES.es;
-        document.title = t.title;
-
-        const btnEs = document.getElementById('btnLangEs');
-        const btnEn = document.getElementById('btnLangEn');
-        if (btnEs && btnEn) {
-          btnEs.className = idiomaActual === 'es'
-            ? 'px-2.5 py-1 rounded bg-red-800 text-white cursor-pointer'
-            : 'px-2.5 py-1 rounded text-zinc-400 hover:text-white cursor-pointer';
-          btnEn.className = idiomaActual === 'en'
-            ? 'px-2.5 py-1 rounded bg-red-800 text-white cursor-pointer'
-            : 'px-2.5 py-1 rounded text-zinc-400 hover:text-white cursor-pointer';
+      if (perfilActual.rol === 'admin') {
+        mostrarSeccion('admin');
+        cargarDatosAdmin();
+      } else {
+        document.getElementById('lblEmpresaCliente').textContent = perfilActual.empresa || usuarioActual.email;
+        mostrarSeccion('cliente');
+        if (document.getElementById('tablaPlantillaBody').children.length === 0) {
+          agregarFilaPlantilla();
+          agregarFilaPlantilla();
         }
-
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-          const key = el.getAttribute('data-i18n');
-          if (t[key]) el.textContent = t[key];
-        });
-
-        document.getElementById('authEmpresa').placeholder = t.ph_company;
-        document.getElementById('authEmail').placeholder = t.ph_email;
-        document.getElementById('authPass').placeholder = t.ph_pass;
-        document.getElementById('notaArchivoCliente').placeholder = t.ph_file_note;
-        document.getElementById('adminNotaEntrega').placeholder = t.ph_admin_note;
-
-        document.querySelectorAll('#tablaPlantillaBody tr').forEach(tr => {
-          const inputs = tr.querySelectorAll('input');
-          if (inputs[0]) inputs[0].placeholder = t.ph_sku;
-          if (inputs[1]) inputs[1].placeholder = t.ph_prod;
-          if (inputs[2]) inputs[2].placeholder = t.ph_unit;
-          if (inputs[5]) inputs[5].placeholder = t.ph_notes;
-        });
-
-        if (usuarioActual && perfilActual && perfilActual.rol !== 'admin') {
-          cargarArchivosCliente();
-        }
+        cargarArchivosCliente();
       }
+    }
 
-      function mostrarSeccion(nombre) {
-        ['vitrina', 'auth', 'cliente', 'admin'].forEach(s => {
-          document.getElementById('sec-' + s).classList.add('hidden');
-        });
-        document.getElementById('sec-' + nombre).classList.remove('hidden');
+    async function registrarUsuario() {
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPass').value.trim();
+      const empresa = document.getElementById('authEmpresa').value.trim() || email;
+      const msg = document.getElementById('authMsg');
+
+      const { data, error } = await sb.auth.signUp({ email, password });
+      if (error) { msg.textContent = error.message; return; }
+      if (data.user) {
+        await sb.from('perfiles').insert({ id: data.user.id, email, empresa, rol: 'cliente' });
+        msg.textContent = 'Cuenta creada. Entrando al portal...';
+        abrirPortal();
       }
+    }
 
-      async function abrirPortal() {
-        const { data: { session } } = await sb.auth.getSession();
-        if (!session) {
-          mostrarSeccion('auth');
-          return;
+    async function iniciarSesion() {
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPass').value.trim();
+      const msg = document.getElementById('authMsg');
+
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) { msg.textContent = 'Credenciales incorrectas: ' + error.message; return; }
+      abrirPortal();
+    }
+
+    async function cerrarSesion() {
+      await sb.auth.signOut();
+      usuarioActual = null;
+      document.getElementById('btnLogout').classList.add('hidden');
+      mostrarSeccion('vitrina');
+    }
+
+    function agregarFilaPlantilla() {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="py-1.5 pr-2"><input class="w-24 bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-white" placeholder="SKU-01"></td>
+        <td class="py-1.5 pr-2"><input class="w-44 bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-white" placeholder="Producto"></td>
+        <td class="py-1.5 pr-2"><input class="w-20 bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-white" placeholder="Unidad/Kg"></td>
+        <td class="py-1.5 pr-2"><input type="number" class="w-24 bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-white" placeholder="0.00"></td>
+        <td class="py-1.5 pr-2"><input type="number" class="w-24 bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-white" placeholder="0.00"></td>
+        <td class="py-1.5"><input class="w-44 bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-white" placeholder="Insumos o merma"></td>
+      `;
+      document.getElementById('tablaPlantillaBody').appendChild(tr);
+    }
+
+    async function guardarPlantillaCliente() {
+      const filas = [];
+      document.querySelectorAll('#tablaPlantillaBody tr').forEach(tr => {
+        const inputs = tr.querySelectorAll('input');
+        if (inputs[1].value.trim()) {
+          filas.push({
+            sku: inputs[0].value, producto: inputs[1].value, unidad: inputs[2].value,
+            precio_venta: inputs[3].value, costo_estimado: inputs[4].value, notas: inputs[5].value
+          });
         }
-        usuarioActual = session.user;
-        document.getElementById('btnLogout
+      });
+      if (!filas.length) return;
+
+      const { error } = await sb.from('plantillas_datos').insert({
+        user_id: usuarioActual.id,
+        empresa: perfilActual.empresa,
+        tipo_plantilla: 'productos',
+        contenido: filas
+      });
+      document.getElementById('msgPlantilla').textContent = error
+        ? 'Error: ' + error.message
+        : '¡Plantilla enviada al laboratorio! Ya podemos procesarla.';
+    }
+
+    async function subirArchivo(categoria) {
+      const input = document.getElementById('inputArchivoCliente');
+      const nota = document.getElementById('notaArchivoCliente').value;
+      if (!input.files.length) return;
+
+      const file = input.files[0];
+      const ruta = `${usuarioActual.id}/${Date.now()}_${file.name}`;
+
+      const { error: upErr } = await sb.storage.from('hackflix-files').upload(ruta, file);
+      if (upErr) { alert('Error subiendo archivo: ' + upErr.message); return; }
+
+      await sb.from('archivos_portal').insert({
+        user_id: usuarioActual.id,
+        empresa: perfilActual.empresa,
+        nombre_archivo: file.name,
+        ruta_storage: ruta,
+        categoria,
+        nota
+      });
+
+      input.value = '';
+      document.getElementById('notaArchivoCliente').value = '';
+      cargarArchivosCliente();
+    }
+
+    async function descargarArchivo(ruta, nombre) {
+      const { data, error } = await sb.storage.from('hackflix-files').createSignedUrl(ruta, 60);
+      if (error) { alert(error.message); return; }
+      const a = document.createElement('a');
+      a.href = data.signedUrl;
+      a.download = nombre;
+      a.click();
+    }
+
+    async function cargarArchivosCliente() {
+      const { data } = await sb.from('archivos_portal').select('*').eq('user_id', usuarioActual.id).order('creado_en', { ascending: false });
+      const ulEnv = document.getElementById('listaEnviadosCliente');
+      const ulEnt = document.getElementById('listaEntregablesCliente');
+      ulEnv.innerHTML = '';
+      ulEnt.innerHTML = '';
+
+      (data || []).forEach(item => {
+        if (item.categoria === 'entrada_cliente') {
+          ulEnv.innerHTML += `<li class="flex justify-between items-center bg-zinc-900/80 px-3 py-2 rounded">
+            <span>[Archivo] ${item.nombre_archivo} <em class="text-zinc-500">(${item.nota || 'Sin nota'})</em></span>
+            <span class="text-emerald-400">Recibido</span>
+          </li>`;
+        } else {
+          ulEnt.innerHTML += `<li class="flex justify-between items-center bg-emerald-950/30 border border-emerald-700/40 px-3 py-2.5 rounded">
+            <div>
+              <div class="font-bold text-white text-xs">[Reporte] ${item.nombre_archivo}</div>
+              <div class="text-[11px] text-zinc-400">${item.nota || 'Estudio de costeo finalizado'}</div>
+            </div>
+            <button onclick="descargarArchivo('${item.ruta_storage}', '${item.nombre_archivo}')" class="px-3 py-1.5 rounded bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold">
+              Descargar
+            </button>
+          </li>`;
+        }
+      });
+    }
+
+    async function cargarDatosAdmin() {
+      const { data: perfiles } = await sb.from('perfiles').select('*').eq('rol', 'cliente');
+      const sel = document.getElementById('adminSelectCliente');
+      sel.innerHTML = (perfiles || []).map(p => `<option value="${p.id}|${p.empresa}">${p.empresa} (${p.email})</option>`).join('');
+
+      const { data: plantillas } = await sb.from('plantillas_datos').select('*').order('creado_en', { ascending: false });
+      document.getElementById('adminListaPlantillas').innerHTML = (plantillas || []).map(pl => `
+        <div class="bg-zinc-900 p-3 rounded border border-zinc-800">
+          <div class="font-bold text-white">${pl.empresa} — ${pl.contenido.length} productos enviados</div>
+          <pre class="text-[11px] text-zinc-400 mt-1 overflow-x-auto">${JSON.stringify(pl.contenido, null, 2)}</pre>
+        </div>
+      `).join('');
+
+      const { data: archivos } = await sb.from('archivos_portal').select('*').eq('categoria', 'entrada_cliente').order('creado_en', { ascending: false });
+      document.getElementById('adminListaArchivos').innerHTML = (archivos || []).map(a => `
+        <li class="flex justify-between items-center bg-zinc-900 px-3 py-2 rounded">
+          <span><strong>${a.empresa}:</strong> ${a.nombre_archivo}</span>
+          <button onclick="descargarArchivo('${a.ruta_storage}', '${a.nombre_archivo}')" class="text-red-400 underline">Descargar</button>
+        </li>
+      `).join('');
+    }
+
+    async function subirEntregaAdmin() {
+      const selVal = document.getElementById('adminSelectCliente').value;
+      const input = document.getElementById('adminInputArchivo');
+      const nota = document.getElementById('adminNotaEntrega').value;
+      if (!selVal || !input.files.length) return;
+
+      const [clienteId, empresa] = selVal.split('|');
+      const file = input.files[0];
+      const ruta = `${clienteId}/entrega_${Date.now()}_${file.name}`;
+
+      const { error } = await sb.storage.from('hackflix-files').upload(ruta, file);
+      if (error) { alert(error.message); return; }
+
+      await sb.from('archivos_portal').insert({
+        user_id: clienteId,
+        empresa,
+        nombre_archivo: file.name,
+        ruta_storage: ruta,
+        categoria: 'entrega_final',
+        nota
+      });
+
+      alert('¡Reporte publicado en el portal del cliente!');
+      input.value = '';
+    }
+  </script>
+</body>
+</html>
