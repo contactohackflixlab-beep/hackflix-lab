@@ -200,7 +200,7 @@
     </section>
   </main>
 
-  <section id="sec-auth" class="hidden flex-1 flex items-center justify-center px-4 py-12">
+  <section id="sec-auth" class="hidden flex-1 flex items-start justify-center px-4 pt-24 pb-12">
     <div class="metal-card w-full max-w-md p-8 rounded-2xl shadow-2xl">
       <h2 class="text-2xl font-bold text-white mb-1">Portal Privado de Clientes</h2>
       <p class="text-sm text-zinc-300 mb-6">Ingresa o registra tu empresa para gestionar tus plantillas y reportes.</p>
@@ -342,112 +342,314 @@
     </div>
   </footer>
 
-  <!-- Bloque 1: Navegación base garantizada -->
   <script>
-    function mostrarSeccion(nombre) {
-      ['vitrina', 'auth', 'cliente', 'admin'].forEach(function (s) {
-        var el = document.getElementById('sec-' + s);
-        if (el) el.classList.add('hidden');
-      });
-      var target = document.getElementById('sec-' + nombre);
-      if (target) target.classList.remove('hidden');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    (function () {
+      var SUPABASE_URL = 'https://urcjqoxtynhzgqbqkmvq.supabase.co';
+      var SUPABASE_ANON_KEY = 'sb_publishable_Xm8CFzOqP6iZc3kmFUGOGA_r4ANm699';
 
-    async function abrirPortal() {
-      mostrarSeccion('auth');
+      var sb = null;
       try {
-        if (!window.sb || !window.sb.auth) return;
-        var res = await window.sb.auth.getSession();
-        var session = res && res.data ? res.data.session : null;
-        if (!session) return;
-
-        window.usuarioActual = session.user;
-        var btnLogout = document.getElementById('btnLogout');
-        if (btnLogout) btnLogout.classList.remove('hidden');
-
-        var perfilRes = await window.sb.from('perfiles').select('*').eq('id', window.usuarioActual.id).single();
-        var perfil = perfilRes && perfilRes.data ? perfilRes.data : { empresa: window.usuarioActual.email, rol: 'cliente' };
-        window.perfilActual = perfil;
-
-        if (perfil.rol === 'admin') {
-          mostrarSeccion('admin');
-          if (typeof cargarDatosAdmin === 'function') cargarDatosAdmin();
-        } else {
-          var lbl = document.getElementById('lblEmpresaCliente');
-          if (lbl) lbl.textContent = perfil.empresa || window.usuarioActual.email;
-          mostrarSeccion('cliente');
-          var tbody = document.getElementById('tablaPlantillaBody');
-          if (tbody && tbody.children.length === 0 && typeof agregarFilaPlantilla === 'function') {
-            agregarFilaPlantilla();
-            agregarFilaPlantilla();
-          }
-          if (typeof cargarArchivosCliente === 'function') cargarArchivosCliente();
-          if (typeof renderizarDatosYArchivos === 'function') renderizarDatosYArchivos();
+        if (window.supabase && typeof window.supabase.createClient === 'function') {
+          sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         }
-      } catch (err) {
-        console.error('Error al verificar sesión en abrirPortal:', err);
+      } catch (e) {
+        console.error('Error inicializando Supabase:', e);
       }
-    }
 
-    window.mostrarSeccion = mostrarSeccion;
-    window.abrirPortal = abrirPortal;
-  </script>
+      var usuarioActual = null;
+      var perfilActual = null;
 
-  <!-- Bloque 2: Supabase y funcionalidades del portal -->
-  <script>
-    const SUPABASE_URL = 'https://urcjqoxtynhzgqbqkmvq.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_Xm8CFzOqP6iZc3kmFUGOGA_r4ANm699';
-
-    window.sb = null;
-    try {
-      if (window.supabase && typeof window.supabase.createClient === 'function') {
-        window.sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      function mostrarSeccion(nombre) {
+        ['vitrina', 'auth', 'cliente', 'admin'].forEach(function (s) {
+          var el = document.getElementById('sec-' + s);
+          if (el) el.classList.add('hidden');
+        });
+        var target = document.getElementById('sec-' + nombre);
+        if (target) target.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-    } catch (e) {
-      console.error('Error inicializando Supabase:', e);
-    }
 
-    window.usuarioActual = null;
-    window.perfilActual = null;
+      async function abrirPortal() {
+        mostrarSeccion('auth');
+        var msg = document.getElementById('authMsg');
+        if (!sb || !sb.auth) {
+          if (msg) msg.textContent = 'Supabase no está disponible en este momento.';
+          return;
+        }
+        try {
+          var res = await sb.auth.getSession();
+          var session = res && res.data ? res.data.session : null;
+          if (!session) return;
 
-    async function registrarUsuario() {
-      if (!window.sb) return;
-      const email = document.getElementById('authEmail').value.trim();
-      const password = document.getElementById('authPass').value.trim();
-      const empresa = document.getElementById('authEmpresa').value.trim() || email;
-      const msg = document.getElementById('authMsg');
+          usuarioActual = session.user;
+          var btnLogout = document.getElementById('btnLogout');
+          if (btnLogout) btnLogout.classList.remove('hidden');
 
-      const { data, error } = await window.sb.auth.signUp({ email, password });
-      if (error) { msg.textContent = error.message; return; }
-      if (data.user) {
-        await window.sb.from('perfiles').insert({ id: data.user.id, email, empresa, rol: 'cliente' });
-        msg.textContent = 'Cuenta creada. Entrando al portal...';
+          var perfilRes = await sb.from('perfiles').select('*').eq('id', usuarioActual.id).single();
+          perfilActual = (perfilRes && perfilRes.data) ? perfilRes.data : { empresa: usuarioActual.email, rol: 'cliente' };
+
+          if (perfilActual.rol === 'admin') {
+            mostrarSeccion('admin');
+            cargarDatosAdmin();
+          } else {
+            var lbl = document.getElementById('lblEmpresaCliente');
+            if (lbl) lbl.textContent = perfilActual.empresa || usuarioActual.email;
+            mostrarSeccion('cliente');
+            var tbody = document.getElementById('tablaPlantillaBody');
+            if (tbody && tbody.children.length === 0) {
+              agregarFilaPlantilla();
+              agregarFilaPlantilla();
+            }
+            cargarArchivosCliente();
+            renderizarDatosYArchivos();
+          }
+        } catch (err) {
+          console.error('Error al verificar sesión:', err);
+        }
+      }
+
+      async function registrarUsuario() {
+        var msg = document.getElementById('authMsg');
+        if (!sb || !sb.auth) {
+          if (msg) msg.textContent = 'No se pudo conectar con Supabase.';
+          return;
+        }
+        var email = document.getElementById('authEmail').value.trim();
+        var password = document.getElementById('authPass').value.trim();
+        var empresa = document.getElementById('authEmpresa').value.trim() || email;
+
+        if (!email || !password) {
+          if (msg) msg.textContent = 'Ingresa tu correo y contraseña.';
+          return;
+        }
+
+        if (msg) msg.textContent = 'Creando cuenta...';
+        var res = await sb.auth.signUp({ email: email, password: password });
+        if (res.error) {
+          if (msg) msg.textContent = res.error.message;
+          return;
+        }
+        if (res.data && res.data.user) {
+          await sb.from('perfiles').insert({ id: res.data.user.id, email: email, empresa: empresa, rol: 'cliente' });
+          if (msg) msg.textContent = 'Cuenta creada. Entrando al portal...';
+          abrirPortal();
+        }
+      }
+
+      async function iniciarSesion() {
+        var msg = document.getElementById('authMsg');
+        if (!sb || !sb.auth) {
+          if (msg) msg.textContent = 'No se pudo conectar con Supabase.';
+          return;
+        }
+        var email = document.getElementById('authEmail').value.trim();
+        var password = document.getElementById('authPass').value.trim();
+
+        if (!email || !password) {
+          if (msg) msg.textContent = 'Ingresa tu correo y contraseña.';
+          return;
+        }
+
+        if (msg) msg.textContent = 'Verificando credenciales...';
+        var res = await sb.auth.signInWithPassword({ email: email, password: password });
+        if (res.error) {
+          if (msg) msg.textContent = 'Credenciales incorrectas: ' + res.error.message;
+          return;
+        }
+        if (msg) msg.textContent = '';
         abrirPortal();
       }
-    }
 
-    async function iniciarSesion() {
-      if (!window.sb) return;
-      const email = document.getElementById('authEmail').value.trim();
-      const password = document.getElementById('authPass').value.trim();
-      const msg = document.getElementById('authMsg');
+      async function cerrarSesion() {
+        if (sb && sb.auth) await sb.auth.signOut();
+        usuarioActual = null;
+        var btnLogout = document.getElementById('btnLogout');
+        if (btnLogout) btnLogout.classList.add('hidden');
+        mostrarSeccion('vitrina');
+      }
 
-      const { error } = await window.sb.auth.signInWithPassword({ email, password });
-      if (error) { msg.textContent = 'Credenciales incorrectas: ' + error.message; return; }
-      abrirPortal();
-    }
+      function agregarFilaPlantilla() {
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td class="py-1.5 pr-2"><input class="w-24 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="SKU-01"></td>' +
+          '<td class="py-1.5 pr-2"><input class="w-44 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="Producto"></td>' +
+          '<td class="py-1.5 pr-2"><input class="w-20 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="Unidad/Kg"></td>' +
+          '<td class="py-1.5 pr-2"><input type="number" class="w-24 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="0.00"></td>' +
+          '<td class="py-1.5 pr-2"><input type="number" class="w-24 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="0.00"></td>' +
+          '<td class="py-1.5"><input class="w-44 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="Insumos o merma"></td>';
+        document.getElementById('tablaPlantillaBody').appendChild(tr);
+      }
 
-    async function cerrarSesion() {
-      if (window.sb) await window.sb.auth.signOut();
-      window.usuarioActual = null;
-      document.getElementById('btnLogout').classList.add('hidden');
-      mostrarSeccion('vitrina');
-    }
+      async function guardarPlantillaCliente() {
+        if (!sb || !usuarioActual) return;
+        var filas = [];
+        document.querySelectorAll('#tablaPlantillaBody tr').forEach(function (tr) {
+          var inputs = tr.querySelectorAll('input');
+          if (inputs[1].value.trim()) {
+            filas.push({
+              sku: inputs[0].value,
+              producto: inputs[1].value,
+              unidad: inputs[2].value,
+              precio_venta: inputs[3].value,
+              costo_estimado: inputs[4].value,
+              notas: inputs[5].value
+            });
+          }
+        });
+        if (!filas.length) return;
 
-    function agregarFilaPlantilla() {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td class="py-1.5 pr-2"><input class="w-24 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="SKU-01"></td>
-        <td class="py-1.5 pr-2"><input class="w-44 bg-[#1b1e24] border border-white/15 rounded px-2 py-1 text-xs text-white" placeholder="Producto"></td>
-        <td class="py-1.5 pr-2"><input class="w-20 bg-[#1b1e24] border border-white/15 rounded px-2
+        var res = await sb.from('plantillas_datos').insert({
+          user_id: usuarioActual.id,
+          empresa: perfilActual.empresa,
+          tipo_plantilla: 'productos',
+          contenido: filas
+        });
+        document.getElementById('msgPlantilla').textContent = res.error
+          ? 'Error: ' + res.error.message
+          : '¡Plantilla enviada al laboratorio! Ya podemos procesarla.';
+        if (!res.error) renderizarDatosYArchivos();
+      }
+
+      async function subirArchivo(categoria) {
+        if (!sb || !usuarioActual) return;
+        var input = document.getElementById('inputArchivoCliente');
+        var nota = document.getElementById('notaArchivoCliente').value;
+        if (!input.files.length) return;
+
+        var file = input.files[0];
+        var ruta = usuarioActual.id + '/' + Date.now() + '_' + file.name;
+
+        var upRes = await sb.storage.from('hackflix-files').upload(ruta, file);
+        if (upRes.error) { alert('Error subiendo archivo: ' + upRes.error.message); return; }
+
+        await sb.from('archivos_portal').insert({
+          user_id: usuarioActual.id,
+          empresa: perfilActual.empresa,
+          nombre_archivo: file.name,
+          ruta_storage: ruta,
+          categoria: categoria,
+          nota: nota
+        });
+
+        input.value = '';
+        document.getElementById('notaArchivoCliente').value = '';
+        cargarArchivosCliente();
+        renderizarDatosYArchivos();
+      }
+
+      async function descargarArchivo(ruta, nombre) {
+        if (!sb) return;
+        var res = await sb.storage.from('hackflix-files').createSignedUrl(ruta, 60);
+        if (res.error) { alert(res.error.message); return; }
+        var a = document.createElement('a');
+        a.href = res.data.signedUrl;
+        a.download = nombre;
+        a.click();
+      }
+
+      async function cargarArchivosCliente() {
+        if (!sb || !usuarioActual) return;
+        var res = await sb.from('archivos_portal').select('*').eq('user_id', usuarioActual.id).order('creado_en', { ascending: false });
+        var ulEnv = document.getElementById('listaEnviadosCliente');
+        var ulEnt = document.getElementById('listaEntregablesCliente');
+        ulEnv.innerHTML = '';
+        ulEnt.innerHTML = '';
+
+        (res.data || []).forEach(function (item) {
+          if (item.categoria === 'entrada_cliente') {
+            ulEnv.innerHTML += '<li class="flex justify-between items-center bg-[#1b1e24]/90 px-3 py-2 rounded">' +
+              '<span>[Archivo] ' + item.nombre_archivo + ' <em class="text-zinc-400">(' + (item.nota || 'Sin nota') + ')</em></span>' +
+              '<span class="text-emerald-400">Recibido</span></li>';
+          } else {
+            ulEnt.innerHTML += '<li class="flex justify-between items-center bg-emerald-950/40 border border-emerald-700/40 px-3 py-2.5 rounded">' +
+              '<div><div class="font-bold text-white text-xs">[Reporte] ' + item.nombre_archivo + '</div>' +
+              '<div class="text-[11px] text-zinc-300">' + (item.nota || 'Estudio de costeo finalizado') + '</div></div>' +
+              '<button type="button" onclick="descargarArchivo(\'' + item.ruta_storage + '\', \'' + item.nombre_archivo + '\')" class="px-3 py-1.5 rounded bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold">Descargar</button></li>';
+          }
+        });
+      }
+
+      async function cargarDatosAdmin() {
+        if (!sb) return;
+        var perfilesRes = await sb.from('perfiles').select('*').eq('rol', 'cliente');
+        var sel = document.getElementById('adminSelectCliente');
+        sel.innerHTML = (perfilesRes.data || []).map(function (p) {
+          return '<option value="' + p.id + '|' + p.empresa + '">' + p.empresa + ' (' + p.email + ')</option>';
+        }).join('');
+
+        var plantillasRes = await sb.from('plantillas_datos').select('*').order('creado_en', { ascending: false });
+        document.getElementById('adminListaPlantillas').innerHTML = (plantillasRes.data || []).map(function (pl) {
+          return '<div class="bg-[#1b1e24] p-3 rounded border border-white/10">' +
+            '<div class="font-bold text-white">' + pl.empresa + ' — ' + (pl.contenido ? pl.contenido.length : 0) + ' productos enviados</div>' +
+            '<pre class="text-[11px] text-zinc-300 mt-1 overflow-x-auto">' + JSON.stringify(pl.contenido, null, 2) + '</pre></div>';
+        }).join('');
+
+        var archivosRes = await sb.from('archivos_portal').select('*').eq('categoria', 'entrada_cliente').order('creado_en', { ascending: false });
+        document.getElementById('adminListaArchivos').innerHTML = (archivosRes.data || []).map(function (a) {
+          return '<li class="flex justify-between items-center bg-[#1b1e24] px-3 py-2 rounded">' +
+            '<span><strong>' + a.empresa + ':</strong> ' + a.nombre_archivo + '</span>' +
+            '<button type="button" onclick="descargarArchivo(\'' + a.ruta_storage + '\', \'' + a.nombre_archivo + '\')" class="text-red-400 underline">Descargar</button></li>';
+        }).join('');
+      }
+
+      async function subirEntregaAdmin() {
+        if (!sb) return;
+        var selVal = document.getElementById('adminSelectCliente').value;
+        var input = document.getElementById('adminInputArchivo');
+        var nota = document.getElementById('adminNotaEntrega').value;
+        if (!selVal || !input.files.length) return;
+
+        var parts = selVal.split('|');
+        var clienteId = parts[0];
+        var empresa = parts[1];
+        var file = input.files[0];
+        var ruta = clienteId + '/entrega_' + Date.now() + '_' + file.name;
+
+        var upRes = await sb.storage.from('hackflix-files').upload(ruta, file);
+        if (upRes.error) { alert(upRes.error.message); return; }
+
+        await sb.from('archivos_portal').insert({
+          user_id: clienteId,
+          empresa: empresa,
+          nombre_archivo: file.name,
+          ruta_storage: ruta,
+          categoria: 'entrega_final',
+          nota: nota
+        });
+
+        alert('¡Reporte publicado en el portal del cliente!');
+        input.value = '';
+      }
+
+      async function abrirArchivoFirmado(rutaArchivo) {
+        if (!sb) return;
+        var res = await sb.storage.from('hackflix-files').createSignedUrl(rutaArchivo, 60);
+        if (!res.error && res.data && res.data.signedUrl) {
+          window.open(res.data.signedUrl, '_blank');
+        }
+      }
+
+      async function renderizarDatosYArchivos() {
+        if (!sb) return;
+        var userRes = await sb.auth.getUser();
+        var user = userRes && userRes.data ? userRes.data.user : null;
+        if (!user) return;
+
+        var contPlantillas = document.getElementById('vista-plantillas');
+        var contArchivos = document.getElementById('vista-archivos');
+
+        var plantillasRes = await sb
+          .from('plantillas_datos')
+          .select('id, empresa, tipo_plantilla, estado, creado_en, contenido')
+          .eq('user_id', user.id)
+          .order('creado_en', { ascending: false });
+
+        if (!plantillasRes.error && contPlantillas) {
+          contPlantillas.innerHTML = (plantillasRes.data || []).map(function (p) {
+            var filas = Array.isArray(p.contenido) ? p.contenido : [];
+            var itemsHtml = filas.map(function (item) {
+              var precio = Number(item.precio_venta || 0);
+              var costo = Number(item.costo_estimado || 0);
+              var margen = (precio - costo).toFixed(2);
+              return '<div class="text-sm border-t border-white/10 pt-2 mt-2 flex flex-wrap gap-3">' +
+                '<span><strong>SKU:</strong> ' + (item.sku || '-')
